@@ -75,5 +75,19 @@ namespace warmUp {/*
                     return true;
             return false;
         }
+
+        public void CopyTo(T[] target, int fromIndex) {
+            // exception: 0. if target is null 1. index is negative, 2. there is not enough space for all elements from start index to end of given array
+            if(target == null)
+                throw new ArgumentNullException();
+            if(fromIndex < 0) 
+                throw new ArgumentOutOfRangeException();
+            if(target.Length < _count + fromIndex) 
+                throw new ArgumentException();
+            for(int i = fromIndex; i < (fromIndex + _count) ; ++i )
+                target[i] = data[ i - fromIndex ];
+        }
+
+
     }
 }

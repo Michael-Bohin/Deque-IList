@@ -66,8 +66,23 @@ partial class UnitTestFramework {
                 sw.WriteLine("true");
             else 
                 sw.WriteLine("false");
+        }   
+    }
+
+    private void UNIT_copyto(StreamWriter sw) {
+        if(typeOfClass == "int") {
+            int[] target = new int[] { 1,2,3,4,5,6,7,8,9,10,20,20,20,20,19,18 };
+            testovanaTridaInt.CopyTo(target, 5);
+            foreach(int i in target)
+                sw.Write(i + ",");
+            sw.WriteLine();
+        }   else {
+            string[] target = new string[] { "ykRXzPdlOZ","FquDbpgHyX","ZttqHzmFtB","RvNzjcrLtK","WxhwlaFwOy","flQeR","rxFhGKVS","YyvLhLZw","FCZMrDSFIg","OpvvGxAdij" };
+            testovanaTridaString.CopyTo(target, 1);
+            foreach(string s in target)
+                sw.Write(s + ",");
+            sw.WriteLine();
         }
-        
     }
 
     /*private void UNIT_get_i(StreamWriter sw) {
@@ -80,9 +95,7 @@ partial class UnitTestFramework {
 
     
 
-    private void UNIT_copyto(StreamWriter sw) {
-        
-    }
+    
 
     private void UNIT_indexof(StreamWriter sw) {
         

@@ -103,11 +103,13 @@ partial class UnitTestFramework {
                 UNIT_count(sw); break;
             case "get[]": WriteLine("Yet to be implemented command!! "); break;
             case "set[]": WriteLine("Yet to be implemented command!! "); break;
-            case "clear": 
+            case "clear":
                 UNIT_clear(); break;
             case "contains": 
                 UNIT_contains(arg2, sw); break;
-            case "copyto": WriteLine("Yet to be implemented command!! "); break;
+            case "copyto":
+                UNIT_copyto(sw); // this one is kind of troubling fro unit testing: I also need need target array
+                break;
             case "indexof": WriteLine("Yet to be implemented command!! "); break;
             case "insert": WriteLine("Yet to be implemented command!! "); break;
             case "remove": WriteLine("Yet to be implemented command!! "); break;
@@ -156,8 +158,6 @@ partial class UnitTestFramework {
         using (StreamReader actualReader = new StreamReader(actualPath)) 
             while(actualReader.ReadLine() is string line)
                     actualFile.Add(line);
-
-
 
         vyslov_Ortel(expectedFile, actualFile, fileName);
     }
