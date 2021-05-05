@@ -34,7 +34,7 @@ namespace warmUp {/*
         }
     }
 
-    class MyList<T> /* : IList<T> */ {
+    class MyList<T>  where T : IComparable<T> /* : IList<T> */ {
         private int _count = 0;
         private int _capacity = 100;
         private T[] data = new T[100]; // allocate memory for hundred elements by default, note that in some cases this might waaay too much. Hence some constructor with this parametr would definitelly make sense. 
@@ -67,6 +67,13 @@ namespace warmUp {/*
             _count = 0;
             _capacity = 100;
             data = new T[100];
+        }
+
+        public bool Contains(T x) {
+            for(int i = 0; i < _count; ++i)
+                if(x.CompareTo(data[i]) == 0)
+                    return true;
+            return false;
         }
     }
 }

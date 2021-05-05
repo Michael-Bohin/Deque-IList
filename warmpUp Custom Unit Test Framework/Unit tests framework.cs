@@ -90,31 +90,23 @@ partial class UnitTestFramework {
         string[] arguments = command.Trim().Split();
         string arg1 = arguments[0];
         string arg2 = arguments.Length == 1 ? "" : arguments[1];
+        WriteLine($"Running command >> {arg1}  ");
         switch (arg1)
         {
             case "new": 
-                WriteLine($"Running command >> {arg1}  "); 
-                UNIT_new(arg2);
-                break;
+                UNIT_new(arg2); break;
             case "add": 
-                WriteLine($"Running command >> {arg1} "); 
-                UNIT_add(arg2);
-                break;
+                UNIT_add(arg2); break;
             case "foreach": 
-                WriteLine($"Running command >> {arg1}  "); 
-                UNIT_foreach(sw);
-                break;
+                UNIT_foreach(sw); break;
             case "count": 
-                WriteLine($"Running command >> {arg1}  ");
-                UNIT_count(sw); 
-                break;
+                UNIT_count(sw); break;
             case "get[]": WriteLine("Yet to be implemented command!! "); break;
             case "set[]": WriteLine("Yet to be implemented command!! "); break;
             case "clear": 
-                WriteLine("Yet to be implemented command!! "); 
-                UNIT_clear();
-                break;
-            case "contains": WriteLine("Yet to be implemented command!! "); break;
+                UNIT_clear(); break;
+            case "contains": 
+                UNIT_contains(arg2, sw); break;
             case "copyto": WriteLine("Yet to be implemented command!! "); break;
             case "indexof": WriteLine("Yet to be implemented command!! "); break;
             case "insert": WriteLine("Yet to be implemented command!! "); break;

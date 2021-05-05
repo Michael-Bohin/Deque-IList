@@ -55,6 +55,21 @@ partial class UnitTestFramework {
         }
     }
 
+    private void UNIT_contains(string x, StreamWriter sw) {
+        if(typeOfClass == "int") {
+            if(testovanaTridaInt.Contains(int.Parse(x)))
+                sw.WriteLine("true");
+            else 
+                sw.WriteLine("false");
+        } else {
+            if(testovanaTridaString.Contains(x))
+                sw.WriteLine("true");
+            else 
+                sw.WriteLine("false");
+        }
+        
+    }
+
     /*private void UNIT_get_i(StreamWriter sw) {
 
     }
@@ -63,9 +78,7 @@ partial class UnitTestFramework {
 
     }
 
-    private void UNIT_contains(StreamWriter sw) {
-        
-    }
+    
 
     private void UNIT_copyto(StreamWriter sw) {
         
