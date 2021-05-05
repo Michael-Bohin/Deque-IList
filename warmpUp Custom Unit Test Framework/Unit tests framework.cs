@@ -110,7 +110,9 @@ partial class UnitTestFramework {
             case "copyto":
                 UNIT_copyto(sw); // this one is kind of troubling fro unit testing: I also need need target array
                 break;
-            case "indexof": WriteLine("Yet to be implemented command!! "); break;
+            case "indexof": 
+                UNIT_indexof(arg2, sw);
+                break;
             case "insert": WriteLine("Yet to be implemented command!! "); break;
             case "remove": WriteLine("Yet to be implemented command!! "); break;
             case "removeat": WriteLine("Yet to be implemented command!! "); break;

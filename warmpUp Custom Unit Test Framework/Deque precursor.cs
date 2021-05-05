@@ -34,7 +34,7 @@ namespace warmUp {/*
         }
     }
 
-    class MyList<T>  where T : IComparable<T> /* : IList<T> */ {
+    class MyList<T> /*: IList<T>*/ where T : IComparable<T>    {
         private int _count = 0;
         private int _capacity = 100;
         private T[] data = new T[100]; // allocate memory for hundred elements by default, note that in some cases this might waaay too much. Hence some constructor with this parametr would definitelly make sense. 
@@ -42,6 +42,7 @@ namespace warmUp {/*
         public MyList() {}
 
         public int Count => _count;
+        public bool IsReadOnly => false; // nobody told us to forbid addition and removal of elements after creation
 
         public void Add(T x) {
             if( _count == _capacity) 
@@ -88,6 +89,31 @@ namespace warmUp {/*
                 target[i] = data[ i - fromIndex ];
         }
 
+        public int IndexOf(T item, int index) {
+            if(index < 0 || (_count - 1) < index)
+                throw new ArgumentOutOfRangeException();
+            for(int i = index; i < _count; ++i)
+                if(item.CompareTo(data[i]) == 0)
+                    return i;
+            return -1;
+        }
+
+        public int IndexOf (T item, int index, int Xcount) { // prepended count with X in order to not confuse it with class' property _count and Count
+            if(Xcount < 0 || index < 0 || (_count - 1) < (index + Xcount) )
+                throw new ArgumentOutOfRangeException();
+
+            for(int i = index; i < ( index + Xcount ) ; ++i)
+                if(item.CompareTo(data[i]) == 0)
+                    return i;
+            return -1;
+        }
+
+        public int IndexOf (T item) {
+            for(int i = 0; i < _count; ++i)
+                if(item.CompareTo(data[i]) == 0)
+                    return i;
+            return -1;
+        }
 
     }
 }

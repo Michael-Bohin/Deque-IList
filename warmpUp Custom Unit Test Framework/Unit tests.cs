@@ -85,20 +85,21 @@ partial class UnitTestFramework {
         }
     }
 
+    private void UNIT_indexof(string x, StreamWriter sw) {
+        if(typeOfClass == "int") {
+            int searchItem = int.Parse(x);
+            sw.WriteLine(testovanaTridaInt.IndexOf(searchItem));
+        } else {
+            sw.WriteLine(testovanaTridaString.IndexOf(x));
+        }
+    }
+
     /*private void UNIT_get_i(StreamWriter sw) {
 
     }
 
     private void UNIT_set_i(StreamWriter sw) {
 
-    }
-
-    
-
-    
-
-    private void UNIT_indexof(StreamWriter sw) {
-        
     }
 
     private void UNIT_insert(StreamWriter sw) {
