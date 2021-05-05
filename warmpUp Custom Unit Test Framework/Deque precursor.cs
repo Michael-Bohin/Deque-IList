@@ -62,5 +62,11 @@ namespace warmUp {/*
             for(int i = 0; i < _count; ++i)
                 yield return data[i];
         }
+
+        public void Clear() {
+            _count = 0;
+            _capacity = 100;
+            data = new T[100];
+        }
     }
 }

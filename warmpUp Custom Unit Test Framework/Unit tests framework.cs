@@ -94,11 +94,11 @@ partial class UnitTestFramework {
         {
             case "new": 
                 WriteLine($"Running command >> {arg1}  "); 
-                UNIT_new(arg2, sw);
+                UNIT_new(arg2);
                 break;
             case "add": 
                 WriteLine($"Running command >> {arg1} "); 
-                UNIT_add(arg2, sw);
+                UNIT_add(arg2);
                 break;
             case "foreach": 
                 WriteLine($"Running command >> {arg1}  "); 
@@ -110,7 +110,10 @@ partial class UnitTestFramework {
                 break;
             case "get[]": WriteLine("Yet to be implemented command!! "); break;
             case "set[]": WriteLine("Yet to be implemented command!! "); break;
-            case "clear": WriteLine("Yet to be implemented command!! "); break;
+            case "clear": 
+                WriteLine("Yet to be implemented command!! "); 
+                UNIT_clear();
+                break;
             case "contains": WriteLine("Yet to be implemented command!! "); break;
             case "copyto": WriteLine("Yet to be implemented command!! "); break;
             case "indexof": WriteLine("Yet to be implemented command!! "); break;

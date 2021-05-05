@@ -8,7 +8,7 @@ namespace warmUp {
 
 partial class UnitTestFramework {
 
-    private void UNIT_new (string type, StreamWriter sw) {
+    private void UNIT_new (string type) {
         if(type == "int") {
             typeOfClass = "int";
             testovanaTridaInt = new MyList<int>();
@@ -21,7 +21,7 @@ partial class UnitTestFramework {
         }
     }
 
-    private void UNIT_add (string x, StreamWriter sw) {
+    private void UNIT_add (string x) {
         if(typeOfClass == "int") {
             testovanaTridaInt.Add(int.Parse(x));
         } else {
@@ -47,16 +47,20 @@ partial class UnitTestFramework {
         }
     }
 
+    private void UNIT_clear() {
+        if(typeOfClass == "int") {
+            testovanaTridaInt.Clear();
+        } else {
+            testovanaTridaString.Clear();
+        }
+    }
+
     /*private void UNIT_get_i(StreamWriter sw) {
 
     }
 
     private void UNIT_set_i(StreamWriter sw) {
 
-    }
-
-    private void UNIT_clear(StreamWriter sw) {
-        
     }
 
     private void UNIT_contains(StreamWriter sw) {
