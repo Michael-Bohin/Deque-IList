@@ -116,9 +116,12 @@ partial class UnitTestFramework {
             case "insert": 
                 UNIT_insert(arg2, arguments[2]); // arg2 is int index, arguments[2] is T item
                 break;
-            case "remove": WriteLine("Yet to be implemented command!! "); break;
-            case "removeat": WriteLine("Yet to be implemented command!! "); break;
-            
+            case "remove": 
+                UNIT_remove(arg2, sw); // arg2 is T item to be removed, it does writeline bool return value on one line
+                break;
+            case "removeat": 
+                UNIT_removeat(arg2); // arg2 is the int index to be removed 
+                break;
             default:
                 WriteLine("Fatal error of unit test framework!!.😱😱");
                 WriteLine("Ran into unknown command in testing input file");

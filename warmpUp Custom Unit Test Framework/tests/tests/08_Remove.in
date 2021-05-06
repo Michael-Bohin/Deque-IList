@@ -1,0 +1,56 @@
+new int 
+add 5000805
+add 1934742
+add 4796453
+add 3759620
+add 9203516
+add 6969483
+add 2476455
+add 8281409
+add 981098
+add 8214043
+count
+foreach
+remove 45
+remove 56465
+remove 1234
+count
+foreach
+remove 3759620
+remove 8214043
+remove 5000805
+count
+foreach
+insert 0 -3
+remove 6969483
+add 3
+count
+foreach
+remove -99999
+
+new string 
+add qsTcwKd
+add vWfSVCd
+add auXRvkg
+add CuRkfSN
+add gWuzMXO
+add rUORhjf
+add QWHZPwq
+add nEYfWxe
+add TUUDuxV
+add KGAlUrX
+insert 0 ahoj
+add svete
+count 
+foreach
+remove AHOJ
+remove sveTe
+remove ahoj 
+remove svete
+count 
+foreach
+remove QWHZPwq
+count 
+foreach
+
+
