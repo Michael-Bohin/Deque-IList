@@ -101,8 +101,12 @@ partial class UnitTestFramework {
                 UNIT_foreach(sw); break;
             case "count": 
                 UNIT_count(sw); break;
-            case "get[]": WriteLine("Yet to be implemented command!! "); break;
-            case "set[]": WriteLine("Yet to be implemented command!! "); break;
+            case "get[]": 
+                UNIT_get_i(arg2, sw); // arg2 = i index
+                break;
+            case "set[]": 
+                UNIT_set_i(arg2, arguments[2]); // arg2 = i index, arguments[2] = T value
+                break;
             case "clear":
                 UNIT_clear(); break;
             case "contains": 

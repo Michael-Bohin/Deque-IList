@@ -348,3 +348,12 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/warmpUp Custom Unit Test Framework/tests/actual/09_RemoveAt.out
+/warmpUp Custom Unit Test Framework/tests/actual/08_Remove.out
+/warmpUp Custom Unit Test Framework/tests/actual/03_Contains.out
+/warmpUp Custom Unit Test Framework/tests/actual/04_CopyTo.out
+/warmpUp Custom Unit Test Framework/tests/actual/05_GetEnumerator.out
+/warmpUp Custom Unit Test Framework/tests/actual/06_IndexOf.out
+/warmpUp Custom Unit Test Framework/tests/actual/07_Insert.out
+/warmpUp Custom Unit Test Framework/tests/actual/01_Add.out
+/warmpUp Custom Unit Test Framework/tests/actual/02_Clear.out

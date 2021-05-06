@@ -117,14 +117,24 @@ partial class UnitTestFramework {
             testovanaTridaString.RemoveAt(int.Parse(int_index));
     }
 
-    /*private void UNIT_get_i(StreamWriter sw) {
-
+    private void UNIT_get_i(string int_index, StreamWriter sw) {
+        if(typeOfClass == "int") {
+            sw.WriteLine(testovanaTridaInt[int.Parse(int_index)]);
+        } else {
+            sw.WriteLine(testovanaTridaString[int.Parse(int_index)]);
+        }
     }
 
-    private void UNIT_set_i(StreamWriter sw) {
-
+    private void UNIT_set_i(string int_index, string T_item) {
+        int index = int.Parse(int_index);
+        if(typeOfClass == "int") {
+            int val = int.Parse(T_item);
+            testovanaTridaInt[index] = val;
+        } else {
+            testovanaTridaString[index] = T_item;
+        }
     }
-*/
+
 
 } // end partial class Unit Test Framework
 

@@ -59,6 +59,13 @@ namespace warmUp {/*
             _capacity *= 2;                                 // save new capacity
         }
 
+        public T this[int index]  // indexer declaration
+        { 
+            // The arr object will throw IndexOutOfRange exception.
+            get => data[index];
+            set => data[index] = value;
+        }
+
         public IEnumerator<T> GetEnumerator() {
             for(int i = 0; i < _count; ++i)
                 yield return data[i];
@@ -120,16 +127,14 @@ namespace warmUp {/*
                 throw new ArgumentOutOfRangeException();
             if( _count == _capacity) 
                 DoubleCapacity();
-            // first shift all elements by one index
-            // note it significantly more practical to shift them from end to the point of insertion
+            // first shift all elements by one index, note it significantly more practical to shift them from end to the point of insertion
             _count++;
             for(int i = _count-1; index < i ; --i) // copy the element from previous index to here
                 data[i] = data[i-1];
             data[index] = item;
         }
 
-        public bool Remove (T item) {
-            // remove first occurence of the item T from the begining 
+        public bool Remove (T item) { // remove first occurence of the item T from the begining 
             // Remarks
             // If type T implements the IEquatable<T> generic interface, the equality comparer is the Equals method of that interface; otherwise, the default equality comparer is Object.Equals.
             for(int i = 0; i < _count; ++i)
@@ -145,24 +150,11 @@ namespace warmUp {/*
                 throw new NotSupportedException();
             if(index < 0 || (_count - 1) < index )
                 throw new ArgumentOutOfRangeException();
-
-            // -> since this collection is indexed, the best way is to overwrite all
-            //    elements with one higher index, similar to perforaming swaps
-            //    except, the first element disappear
-
-            // !! beware to not touch the index at _count -> most of the cases its there but 
-            //    when _count == _capacity this yields OutOfBoundsExcpetion !!
-            //  -> the last element may stay where it was -> by decrementing _count by one
-            //  it is unreachable by outside world and uppon first add, it will get overwritten 
-            //  it exists at two indexes than (after removal: _count and _count+1)
+            // -> since this collection is indexed, the best way is to overwrite all elements with one higher index, similar to perforaming swaps except, the first element disappear
+            // !! beware to not touch the index at _count -> most of the cases its there but  when _count == _capacity this yields OutOfBoundsExcpetion !! -> the last element may stay where it was -> by decrementing _count by one it is unreachable by outside world and uppon first add, it will get overwritte it exists at two indexes than (after removal: _count and _count+1)
             for(int i = index; i < (_count-1); ++i)
                 data[i] = data[ i+1 ];
-            _count--;
-            
-            // job done 😂
+            _count--; // job done 😂
         }
-
-
-
     }
 }
