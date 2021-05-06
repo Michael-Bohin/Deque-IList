@@ -1,0 +1,66 @@
+new int 
+add 3687385
+add 63877277
+add 60516058
+add -31728551
+add 88695393
+add 73786989
+add -48893253
+add 6233415
+add 80064894
+add -38220460
+add 61
+count 
+foreach
+insert 0 -9
+count
+foreach
+insert 12 88
+count
+foreach
+clear
+count
+foreach
+insert 0 5
+insert 1 6
+insert 2 7
+insert 3 8
+insert 4 9
+insert 0 1
+insert 1 2
+insert 2 3
+insert 3 4
+foreach
+count
+insert 4 -55
+count
+foreach
+
+new string 
+add wmsoONrRlwaCEZW
+add ThJhrzUhUqJGviW
+add GHTvHqbLYegDKJB
+add GPssfIZuktYTHfK
+add EXVZbVqSLzSQJPg
+add oSpHFNSwbrjOQEQ
+add OljhTmnawcSoYBf
+add wuuRbssoJdRuNTS
+add cxETBpBMFoSzJgp
+add yjDroUMUQHVMpdB
+add TUMXoxdUsIRfCed
+add HUfHzMCSMcoDGxl
+add VuDbLDAYAzdEMhQ
+add EgRBluTNMuBQmfX
+add sQrWHbWZKzNmqjr
+count
+foreach
+insert 0 a
+insert 16 b
+count
+foreach
+insert 5 c
+foreach
+count
+
+
+

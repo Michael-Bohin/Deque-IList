@@ -113,7 +113,9 @@ partial class UnitTestFramework {
             case "indexof": 
                 UNIT_indexof(arg2, sw);
                 break;
-            case "insert": WriteLine("Yet to be implemented command!! "); break;
+            case "insert": 
+                UNIT_insert(arg2, arguments[2]); // arg2 is int index, arguments[2] is T item
+                break;
             case "remove": WriteLine("Yet to be implemented command!! "); break;
             case "removeat": WriteLine("Yet to be implemented command!! "); break;
             

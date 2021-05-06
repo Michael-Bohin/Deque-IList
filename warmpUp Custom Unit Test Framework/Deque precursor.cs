@@ -115,5 +115,20 @@ namespace warmUp {/*
             return -1;
         }
 
+        public void Insert(int index, T item) {
+            if(index < 0 || _count < index)
+                throw new ArgumentOutOfRangeException();
+            if( _count == _capacity) 
+                DoubleCapacity();
+            // first shift all elements by one index
+            // note it significantly more practical to shift them from end to the point of insertion
+            _count++;
+            for(int i = _count-1; index < i ; --i) // copy the element from previous index to here
+                data[i] = data[i-1];
+            data[index] = item;
+        }
+
+
+
     }
 }

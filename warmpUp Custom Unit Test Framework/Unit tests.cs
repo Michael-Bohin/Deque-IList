@@ -94,16 +94,19 @@ partial class UnitTestFramework {
         }
     }
 
+    private void UNIT_insert(string index, string item) {
+        if(typeOfClass == "int")
+            testovanaTridaInt.Insert(int.Parse(index), int.Parse(item));
+        else 
+            testovanaTridaString.Insert(int.Parse(index), item);
+    }
+
     /*private void UNIT_get_i(StreamWriter sw) {
 
     }
 
     private void UNIT_set_i(StreamWriter sw) {
 
-    }
-
-    private void UNIT_insert(StreamWriter sw) {
-        
     }
 
     private void UNIT_remove(StreamWriter sw) {
