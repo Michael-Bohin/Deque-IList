@@ -1,0 +1,15 @@
+new type 		// type be either int or string for simplicity, initialise new instance of class and do all of the following commands on it 
+add T
+clear
+contains T
+copyto T[] int
+indexof T
+insert int T 
+remove T
+removeat int
+count
+get [int]
+set [int]
+count 
+foreach 		// print line by line using unit tests for(int i = 0 ... 
+enumerator		// print liny be line using enumerator -> foreach

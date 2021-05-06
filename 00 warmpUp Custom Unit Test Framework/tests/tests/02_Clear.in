@@ -1,0 +1,73 @@
+new int
+add 5
+add 4
+add 7
+add 8
+add 1
+add 2
+add 3
+add 4
+add 5
+add 12
+add 154
+add 458
+add 654
+add 1000
+add 15
+add 16
+add 1
+add 0
+foreach
+count
+clear
+add 15
+add 16
+add 1
+clear
+add 654
+add 1000
+add 15
+add 16
+add 1
+foreach
+count
+add 15
+clear
+add 458
+add 654
+foreach
+count
+
+
+new string 
+add Lorem
+add ipsum
+add dolor
+add sit
+add amet,
+add vel
+add ex
+add viris
+add virtute
+add corpora.
+add Eu
+add vix
+add quando
+add ornatus
+add assentior.
+foreach
+count
+clear
+foreach
+count
+add ahoj
+add svete
+foreach
+count
+add randomWord
+foreach
+count
+clear
+foreach
+count
+

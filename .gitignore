@@ -358,3 +358,13 @@ MigrationBackup/
 /warmpUp Custom Unit Test Framework/tests/actual/01_Add.out
 /warmpUp Custom Unit Test Framework/tests/actual/02_Clear.out
 /warmpUp Custom Unit Test Framework/tests/actual/10_Indexers.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/06_IndexOf.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/07_Insert.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/08_Remove.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/09_RemoveAt.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/10_Indexers.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/01_Add.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/02_Clear.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/03_Contains.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/04_CopyTo.out
+/00 warmpUp Custom Unit Test Framework/tests/actual/05_GetEnumerator.out
