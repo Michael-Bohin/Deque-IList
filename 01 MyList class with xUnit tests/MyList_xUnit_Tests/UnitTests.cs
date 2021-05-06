@@ -2,18 +2,55 @@ using System;
 using Xunit;
 using MyList_v01;
 using System.Collections.Generic;
+using System.IO;
+using static System.Console;
 
 namespace MyList_xUnit_Tests
 {
-    public class Test_01_Method_Add
+    public class MyList_xUnit_Tests
     {
-        [Fact]
-        public void Test_Int_Instance()
+        private int counter = 0;
+        private List<List<int>> integer_Matrix = new List<List<int>>();
+        private List<List<string>> string_Matrix = new List<List<string>>();
+        int intLines = 0;
+        int stringLines = 0;
+
+        public MyList_xUnit_Tests()
         {
+            // constructor of unit tests to load premade data into matrices above.
+            using (StreamReader sr = new StreamReader("../../../rand_Integers.in"))
+                while(sr.ReadLine() is string s) {
+                    string[] line = s.Split();
+                    List<int> nextLine = new List<int>();
+                    for(int i = 0; i < line.Length; ++i)
+                        nextLine.Add(int.Parse(line[i]));
+                    integer_Matrix.Add(nextLine); 
+                }
+
+            intLines = integer_Matrix.Count;
+
+            using (StreamReader sr = new StreamReader("../../../rand_Strings.in"))
+                while(sr.ReadLine() is string s) {
+                    string[] line = s.Split();
+                    List<string> nextLine = new List<string>();
+                    for(int i = 0; i < line.Length; ++i)
+                        nextLine.Add(line[i]);
+                    string_Matrix.Add(nextLine); 
+                }
+
+            stringLines = string_Matrix.Count;
+        }
+
+        [Fact]
+        public void Add_01_Int()
+        {
+            counter = (counter + 1) % intLines;
             // Arrange
-            // recieved from random.org/strings
-            int[] randomInput = new int[] { 7345658, 1377694, 1314010, 1884538, 9995660, 8056398, 3640660, 1831291, 1417693, 4217880 };
-            int[] expectedOutput = new int[] { 7345658, 1377694, 1314010, 1884538, 9995660, 8056398, 3640660, 1831291, 1417693, 4217880 };
+            int[] randomInput = integer_Matrix[counter].ToArray();
+            int[] expectedOutput = integer_Matrix[counter].ToArray();
+            WriteLine($"Hello, rand length: {randomInput.Length}");
+            WriteLine($"Hello, expected length: {expectedOutput.Length}");
+
             MyList<int> ml = new MyList<int>();
             // Act
             foreach (int i in randomInput)
@@ -35,35 +72,94 @@ namespace MyList_xUnit_Tests
         }
 
         [Fact]
-        public void Test_String_Instance()
+        public void Add_01_String()
         {
+            counter = (counter + 1) % stringLines;
             // Arrange
-            string[] randomInput = new string[] { "TCiXdpRtXJTfTEPizIum", "ZjyWQWdNKqaeeeKzdrKZ", "TPzugRSpDYlvnfwseSVc", "YepsTkvxSZWfsCSuZVVW", "BAoIsegybByZslxuaJAa", "EBopJRJTnecnwqSBtTom", "fmbgREqRnRLxRdYknUDd", "BSXXiKdkJwRAHALAUAje", "RvqjHEMjAmIwgIyLDgrG", "gzuXfzPnJaDnwQpGJgbE", "ZXbHUVFVWQUnXxbBLZrS", "KQxbILoFGHrChkthqQAA", "ixJvNMRxeUDuIqUIJkdB", "lMzvhlXaarhygSZQLqGu", "xjOQjCesqeegqmqeUSPY", "TzjAvcTDUQTxzcZEVyxc", "nmLHVbDQYopmKTzmwLJK", "yIWCsJVwWuuIJDamOtQU" };
-            string[] expectedOutput = new string[] { "TCiXdpRtXJTfTEPizIum", "ZjyWQWdNKqaeeeKzdrKZ", "TPzugRSpDYlvnfwseSVc", "YepsTkvxSZWfsCSuZVVW", "BAoIsegybByZslxuaJAa", "EBopJRJTnecnwqSBtTom", "fmbgREqRnRLxRdYknUDd", "BSXXiKdkJwRAHALAUAje", "RvqjHEMjAmIwgIyLDgrG", "gzuXfzPnJaDnwQpGJgbE", "ZXbHUVFVWQUnXxbBLZrS", "KQxbILoFGHrChkthqQAA", "ixJvNMRxeUDuIqUIJkdB", "lMzvhlXaarhygSZQLqGu", "xjOQjCesqeegqmqeUSPY", "TzjAvcTDUQTxzcZEVyxc", "nmLHVbDQYopmKTzmwLJK", "yIWCsJVwWuuIJDamOtQU" };
+            string[] randomInput = string_Matrix[counter].ToArray();
+            string[] expectedOutput = string_Matrix[counter].ToArray();
+            WriteLine($"Hello, rand length: {randomInput.Length}");
+            WriteLine($"Hello, expected length: {expectedOutput.Length}");
             MyList<string> ml = new MyList<string>();
-            // Act
+
+            // Act 
             foreach (string s in randomInput)
                 ml.Add(s);
+            
             // Assert
             string expected;
             string actual;
-
             for (int i = 0; i < randomInput.Length; ++i)
             {
                 expected = expectedOutput[i];
                 actual = ml[i]; // also testing indexers
                 Assert.Equal(expected, actual);
             }
-
             int int_expected = expectedOutput.Length;
             int int_actual = ml.Count;
             Assert.Equal(int_expected, int_actual);
+        }
+    
+
+    
+        [Fact]
+        public void Count_02_Int_Property()
+        {
+            // Arrange
+            int[] randomInput = new int[] { 1, 2, 3, 4, 5, 6, 7, -50, -100, 200, 8, 9, 10 };
+            MyList<int> ml = new MyList<int>();
+            int expected;
+            int actual;
+
+            // Act & Assert in parallel
+
+            for (int i = 0; i < randomInput.Length; ++i)
+            {
+                ml.Add(randomInput[i]);
+                expected = i + 1;
+                actual = ml.Count;
+                Assert.Equal(expected, actual);
+            }
+
+            ml.RemoveAt(2);
+            ml.RemoveAt(1);
+            ml.RemoveAt(0);
+            expected = randomInput.Length - 3;
+            actual = ml.Count;
+            Assert.Equal(expected, actual);
 
         }
-    }
 
-    public class Test_02_Property_Count
-    {
+        [Fact]
+        public void Count_02_String_Property()
+        {
+            // Arrange
+            string[] randomInput = new string[] { "abc","def","egh","i","j","k","l","m" };
+            MyList<string> ml = new MyList<string>();
+            int expected;
+            int actual;
+
+            // Act & Assert in parallel
+
+            for (int i = 0; i < randomInput.Length; ++i)
+            {
+                ml.Add(randomInput[i]);
+                expected = i + 1;
+                actual = ml.Count;
+                Assert.Equal(expected, actual);
+            }
+
+            ml.RemoveAt(2);
+            ml.RemoveAt(1);
+            ml.RemoveAt(0);
+            expected = randomInput.Length - 3;
+            actual = ml.Count;
+            Assert.Equal(expected, actual);
+
+        }
+    
+
+    /*
         [Fact]
         public void Test_Int_Instance()
         {
@@ -85,10 +181,7 @@ namespace MyList_xUnit_Tests
             // Assert
 
         }
-    }
-
-    public class Test_03_Property_IsReadOnly
-    {
+   
         [Fact]
         public void Test_Int_Instance()
         {
@@ -110,10 +203,7 @@ namespace MyList_xUnit_Tests
             // Assert
 
         }
-    }
-
-    public class Test_04_Property_Indexers
-    {
+    
         [Fact]
         public void Test_Int_Instance()
         {
@@ -135,10 +225,7 @@ namespace MyList_xUnit_Tests
             // Assert
 
         }
-    }
-
-    public class Test_05_Method_Clear
-    {
+    
         [Fact]
         public void Test_Int_Instance()
         {
@@ -160,10 +247,7 @@ namespace MyList_xUnit_Tests
             // Assert
 
         }
-    }
-
-    public class Test_06_Method_Contains
-    {
+    
         [Fact]
         public void Test_Int_Instance()
         {
@@ -185,30 +269,6 @@ namespace MyList_xUnit_Tests
             // Assert
 
         }
-    }
-
-    public class Test_07_Method_CopyTo
-    {
-        [Fact]
-        public void Test_Int_Instance()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-
-        }
-
-        [Fact]
-        public void Test_String_Instance()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-
-        }
+    */
     }
 }
