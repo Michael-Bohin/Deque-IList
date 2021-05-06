@@ -34,7 +34,7 @@ namespace warmUp {/*
         }
     }
 
-    class MyList<T> /*: IList<T>*/ where T : IComparable<T>    {
+    class MyList<T>  where T : IComparable<T>     {
         
         private int _count = 0;
         private int _capacity = 100;
