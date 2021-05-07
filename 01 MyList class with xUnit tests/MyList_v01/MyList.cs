@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MyList_v01
-{
-    /*
-    Interface IList<T>
+/*  
+    Interface IList<T>, Order of testing
 
     Properties:
-    int Count { get; }                      : ICollection
-    bool IsReadOnly                         : ICollection
-    public T this[int index] { get; set; }  : own
+    02    int Count { get; }                      : ICollection
+    03    bool IsReadOnly                         : ICollection
+    04    public T this[int index] { get; set; }  : own
 
     Methods: 
-    Add(T)                                  : ICollection 
-    Clear()                                 : ICollection
-    Contains(T)                             : ICollection
-    CopyTo(T[], Int32)                      : ICollection
-    GetEnumerator()                         : IEnumerable
-    IndexOf(T)                              : own
-    Insert(Int 32, T)                       : own
-    Remove(T)                               : ICollection
-    RemoveAt(Int32)                         : own
-    */
+    01    Add(T)                                  : ICollection 
+    05    Clear()                                 : ICollection
+    06    Contains(T)                             : ICollection
+    07    CopyTo(T[], Int32)                      : ICollection
+    08    GetEnumerator()                         : IEnumerable
+    09    IndexOf(T)                              : own
+    10    Insert(Int 32, T)                       : own
+    11    Remove(T)                               : ICollection
+    12    RemoveAt(Int32)                         : own
+*/
+namespace MyList_v01
+{
     public class MyList<T>  where T : IComparable<T> //, IList<T>
     {
         private int _count = 0;
