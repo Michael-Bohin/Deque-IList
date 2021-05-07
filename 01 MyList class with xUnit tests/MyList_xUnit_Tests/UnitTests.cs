@@ -27,7 +27,7 @@ using static System.Console;
 
 namespace MyList_xUnit_Tests
 {
-    public class MyList_xUnit_Tests
+    public class MyList_xUnit_Tests_IList_Interface_Methods_And_Properties
     {
         private int counter = 0;
         private List<List<int>> integer_Matrix = new List<List<int>>();
@@ -35,7 +35,7 @@ namespace MyList_xUnit_Tests
         int intLines = 0;
         int stringLines = 0;
 
-        public MyList_xUnit_Tests()
+        public MyList_xUnit_Tests_IList_Interface_Methods_And_Properties()
         {
             // constructor of unit tests to load premade data into matrices above.
             using (StreamReader sr = new StreamReader("../../../rand_Integers.in"))
