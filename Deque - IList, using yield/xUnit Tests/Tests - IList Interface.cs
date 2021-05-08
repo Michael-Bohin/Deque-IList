@@ -228,25 +228,25 @@ namespace xUnit_Tests
 
             // Set some indexes manually & check they are set correctly
 
-            deq[50] = 123456;
-            deq[100] = 654321;
-            deq[150] = 999999;
-            deq[200] = -500;
+            deq[deq.Count-1] = 123456;
+            deq[3574] = 654321;
+            deq[0] = 999999;
+            deq[4851] = -500;
 
             expected = 123456;
-            actual = deq[50];
+            actual = deq[deq.Count-1];
             Assert.Equal(expected, actual);
 
             expected = 654321;
-            actual = deq[100];
+            actual = deq[3574];
             Assert.Equal(expected, actual);
 
             expected = 999999;
-            actual = deq[150];
+            actual = deq[0];
             Assert.Equal(expected, actual);
 
             expected = -500;
-            actual = deq[200];
+            actual = deq[4851];
             Assert.Equal(expected, actual);
         }
 
@@ -285,17 +285,17 @@ namespace xUnit_Tests
 
             // Set some indexes manually & check they are set correctly
 
-            deq[50] = "ahoj";
-            deq[100] = "xUnit";
+            deq[5000] = "ahoj";
+            deq[1000] = "xUnit";
             deq[150] = "test";
-            deq[200] = "svete";
+            deq[2001] = "svete";
 
             expected = "ahoj";
-            actual = deq[50];
+            actual = deq[5000];
             Assert.Equal(expected, actual);
 
             expected = "xUnit";
-            actual = deq[100];
+            actual = deq[1000];
             Assert.Equal(expected, actual);
 
             expected = "test";
@@ -303,7 +303,7 @@ namespace xUnit_Tests
             Assert.Equal(expected, actual);
 
             expected = "svete";
-            actual = deq[200];
+            actual = deq[2001];
             Assert.Equal(expected, actual);
         }
 
@@ -366,18 +366,16 @@ namespace xUnit_Tests
 
             // Act & Assert in parallel
             expected = true;
-            foreach (int i in test_input)
-            {
-                actual = deq.Contains(i);
+            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
+                actual = deq.Contains(test_input_line2[i]);
                 Assert.Equal(expected, actual);
             }
 
             expected = false;
-            foreach (int i in test_input_line2)
-            {
+            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
                 /// there is about 0.0001% chance some of the elements might have been randodeqy generated equal 
                 /// since I used six digit integers, adding 1_000_000_000 will ensure all of them are different from test_input
-                int different_for_sure = i + 1_000_000_000;
+                int different_for_sure = test_input_line2[i] + 1_000_000_000;
                 actual = deq.Contains(different_for_sure);
                 Assert.Equal(expected, actual);
             }
@@ -397,24 +395,22 @@ namespace xUnit_Tests
 
             // Act && Assert in parallel
             expected = true;
-            foreach (string s in test_input)
-            {
-                actual = deq.Contains(s);
+            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
+                actual = deq.Contains(test_input_line2[i]);
                 Assert.Equal(expected, actual);
             }
 
             expected = false;
-            foreach (string s in test_input_line2)
-            {
+            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
                 /// there is about 0.0001% chance some of the elements might have been randodeqy generated equal 
                 /// since I used strings with fixed length, appending some other string suffix will ensure difference
-                string different_for_sure = s + "jinySufix";
+                string different_for_sure = test_input_line2[i] + "jinySufix";
                 actual = deq.Contains(different_for_sure);
                 Assert.Equal(expected, actual);
             }
 
         }
-/*
+
         [Fact]
         public void Test_07_CopyTo_string()
         {
@@ -429,40 +425,40 @@ namespace xUnit_Tests
             string[] array_to_be_modified = new string[test_input_line2.Length * 2]; // two times larger the the input string arrays
 
             for (int i = 0; i < test_input_line2.Length; ++i)
-                array_to_be_modified[i + 100] = test_input_line2[i]; // shift elements by 100 indices
+                array_to_be_modified[i + 1000] = test_input_line2[i]; // shift elements by 100 indices
 
             // Act      --> copy from Deque to the modified array from index 200
-            deq.CopyTo(array_to_be_modified, 200);
+            deq.CopyTo(array_to_be_modified, 2000);
 
             // Assert
 
-            // indices 0 - 99 should be ""
-            // indices 100 - 199 should be from beginning of test_input_line2
-            // indices 200 - (200 + length of test input) shoutld be from test input
-            // indices (200 + length of test input) - (length of array_to_be_modified) should be "
+            // indices 0 - 999 should be null
+            // indices 1000 - 1999 should be from beginning of test_input_line2
+            // indices 2000 - (2000 + length of test input) shoutld be from test input
+            // indices (2000 + length of test input) - (length of array_to_be_modified) should be "
 
-            for (int i = 0; i < 99; ++i)
+            for (int i = 0; i < 999; ++i)
             {
                 expected = null;
                 actual = array_to_be_modified[i];
                 Assert.Equal(expected, actual);
             }
 
-            for (int i = 100; i < 199; ++i)
+            for (int i = 1000; i < 1999; ++i)
             {
-                expected = test_input_line2[i - 100];
+                expected = test_input_line2[i - 1000];
                 actual = array_to_be_modified[i];
                 Assert.Equal(expected, actual);
             }
 
-            for (int i = 200; i < (200 + test_input.Length); ++i)
+            for (int i = 2000; i < (2000 + test_input.Length); ++i)
             {
-                expected = test_input[i - 200];
+                expected = test_input[i - 2000];
                 actual = array_to_be_modified[i];
                 Assert.Equal(expected, actual);
             }
 
-            for (int i = (200 + test_input.Length); i < array_to_be_modified.Length; ++i)
+            for (int i = (2000 + test_input.Length); i < array_to_be_modified.Length; ++i)
             {
                 expected = null;
                 actual = array_to_be_modified[i];
@@ -534,14 +530,14 @@ namespace xUnit_Tests
             List<int> posloupnost_prirozenych_cisel = new List<int>();
 
             // Act
-            for (int i = 0; i < test_input.Length; ++i)
+            for (int i = 0; i < 400; ++i)
             {
                 int testovany_vysledek = deq.IndexOf(test_input[i]);
                 posloupnost_prirozenych_cisel.Add(testovany_vysledek);
             }
 
             // Assert
-            for (int i = 0; i < test_input.Length; i++)
+            for (int i = 0; i < 400; i++)
             {
                 expected = i;
                 actual = posloupnost_prirozenych_cisel[i];
@@ -561,13 +557,13 @@ namespace xUnit_Tests
                 deq.Add(i);
 
             // guarantee all element deq and test input will be different
-            for (int i = 0; i < test_input.Length; i++)
+            for (int i = 0; i < 1000; i++)
                 test_input[i] += 1_000_000_000;
 
             List<int> odpovedi_metody_index_of = new List<int>();
 
             // Act
-            for (int i = 0; i < test_input.Length; ++i)
+            for (int i = 0; i < 1000; ++i)
             {
                 int testovany_vysledek = deq.IndexOf(test_input[i]);
                 odpovedi_metody_index_of.Add(testovany_vysledek);
@@ -575,15 +571,15 @@ namespace xUnit_Tests
 
             // Assert       --> vsechny prvky v deq neexisutji, tedy na vsechny dotazy by index of mel vratit -1
             expected = -1;
-            for (int i = 0; i < test_input.Length; i++)
+            for (int i = 0; i < odpovedi_metody_index_of.Count; i++)
             {
                 actual = odpovedi_metody_index_of[i];
                 Assert.Equal(expected, actual);
             }
         }
 
-        [Fact]
-        public void Test_10_Insert_string()
+       [Fact]
+        public void Test_10_Insert_string_heavy()
         {
             // Arrange
             string[] test_input = Arrange_String();
@@ -624,6 +620,49 @@ namespace xUnit_Tests
             Assert.Equal(expected_count, actual_count);
         }
 
+        [Fact]
+        public void Test_10_Insert_string_light_01()
+        {
+            // Arrange
+            string[] test_input = Arrange_String();
+            string[] test_input_line2 = Arrange_String();
+            string expected, actual;
+            int expected_count, actual_count;
+
+            Deque<string> deq = new Deque<string>();
+            foreach (string s in test_input)
+                deq.Add(s);
+
+            int insert_to_index =  8;
+
+            // Act      
+            deq.Insert(insert_to_index, "Ahoj svete"/*test_input_line2[38]*/);
+
+            // Assert   --> sude a liche samostatne..
+
+            for (int i = 0; i < insert_to_index; i++)
+            {
+                expected = test_input[i];
+                actual = deq[i];
+                Assert.Equal(expected, actual);
+            }
+
+            expected = "Ahoj svete";//test_input_line2[38];
+            actual = deq[insert_to_index];
+            Assert.Equal(expected, actual);
+
+            for (int i = insert_to_index+1; i < test_input.Length; i++)
+            {
+                expected = test_input[i-1];
+                actual = deq[i];
+                Assert.Equal(expected, actual);
+            }
+
+            expected_count = test_input.Length + 1;
+            actual_count = deq.Count;
+            Assert.Equal(expected_count, actual_count);
+        }
+/*
         [Fact]
         public void Test_11_Remove_int()
         {

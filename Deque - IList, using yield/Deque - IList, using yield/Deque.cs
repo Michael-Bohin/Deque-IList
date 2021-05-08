@@ -5,7 +5,7 @@ using static System.Console;
 
 public static class DequeTest
 {
-    public static IList<T> GetReverseView<T>(Deque<T> d)// where T : IComparable<T>
+    public static IList<T> GetReverseView<T>(Deque<T> d)
     {
         return d; // just in place to make recodex not complain.
     }
@@ -15,16 +15,16 @@ class TooSmallCapacityDemandedException : Exception { }
 
 public class Deque<T> : IList<T>
 {
-    class End_Pointer
+    class LBA_Pointer // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
     {
         public int block { get; private set; }
         public int block_Index  { get; private set; }
-        public End_Pointer() { 
+        public LBA_Pointer() { 
             block = 0; // index 0 of first block
             block_Index = 511;
         }
 
-        public End_Pointer(int block, int block_Index) {
+        public LBA_Pointer(int block, int block_Index) {
             this.block = block; this.block_Index = block_Index;
         }
         
@@ -52,8 +52,8 @@ public class Deque<T> : IList<T>
     private int _count = 0;
     private int _capacity = 1024;
     private int _blockCount = 1;
-    private End_Pointer front = new End_Pointer();
-    private End_Pointer back = new End_Pointer();
+    private LBA_Pointer front = new LBA_Pointer();
+    private LBA_Pointer back = new LBA_Pointer();
     private T[][] dataMap = new T[1][];
 
 
@@ -93,22 +93,20 @@ public class Deque<T> : IList<T>
         for(int i = 0; i < larger_dataMap.Length; ++i)
             larger_dataMap[i] = new T[0b_100_0000_0000];
 
-        int blockZero = larger_dataMap.Length / 2;
-        if(blockZero == 0)
-            blockZero++;
+        int blockZero = _blockCount == 1 ? 1 : larger_dataMap.Length / 2 ;
         
-        End_Pointer current = new End_Pointer(blockZero , 0);
+        LBA_Pointer current = new LBA_Pointer(blockZero , 0);
         foreach(T item in this) {
             larger_dataMap[current.block][current.block_Index] = item;
             current.Increment();
         }
         current.Decrement(); // after exiting foreach loop return to real back index (no new element came)
+        
         // 1. overwrite new larger dataMap with current 
         // 2. update _capacity
         // 3. update _blockCount 
         // 4. update back 
         // 5. update front 
-
         dataMap = larger_dataMap;
         _capacity *= 2;
         _blockCount *= 2;
@@ -151,13 +149,12 @@ public class Deque<T> : IList<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        End_Pointer current = new End_Pointer(front.block, front.block_Index);
+        LBA_Pointer current = new LBA_Pointer(front.block, front.block_Index);
         for (int i = 0; i < _count; ++i) {
             yield return dataMap[current.block][current.block_Index];
             current.Increment();
         }  
     }
-
 
     IEnumerator IEnumerable.GetEnumerator()
     {
@@ -177,7 +174,7 @@ public class Deque<T> : IList<T>
 
     public bool Contains(T x)
     {
-        End_Pointer current = new End_Pointer(front.block, front.block_Index);
+        LBA_Pointer current = new LBA_Pointer(front.block, front.block_Index);
 
         for (int i = 0; i < _count; ++i) {
             if (x.Equals(dataMap[current.block][current.block_Index]))
@@ -189,43 +186,55 @@ public class Deque<T> : IList<T>
 
     public void CopyTo(T[] target, int fromIndex)
     {
-       /* // exception: 0. if target is null 1. index is negative, 2. there is not enough space for all elements from start index to end of given array
+        // exception: 0. if target is null 1. index is negative, 2. there is not enough space for all elements from start index to end of given array
         if (target == null)
             throw new ArgumentNullException();
         if (fromIndex < 0)
             throw new ArgumentOutOfRangeException();
         if (target.Length < _count + fromIndex)
             throw new ArgumentException();
-        for (int i = fromIndex; i < (fromIndex + _count); ++i)
-            target[i] = data[i - fromIndex];*/
+
+        int target_Index = fromIndex;
+        foreach(T item in this) {
+            target[target_Index] = item;
+            target_Index++;
+        }
     }
 
     public int IndexOf(T item, int index)
     {
-      /*  if (index < 0 || (_count - 1) < index)
+        if (index < 0 || (_count - 1) < index)
             throw new ArgumentOutOfRangeException();
-        for (int i = index; i < _count; ++i)
-            if (item.Equals(data[i]))
-                return i;*/
+        int i = 0;
+        foreach(T x in this) { 
+            if (item.Equals(x))
+                return i;
+            i++;
+        }
         return -1;
     }
 
     public int IndexOf(T item, int index, int Xcount)
-    { // prepended count with X in order to not confuse it with class' property _count and Count
-       /* if (Xcount < 0 || index < 0 || (_count - 1) < (index + Xcount))
+    {   // prepended count with X in order to not confuse it with class' property _count and Count
+        if (Xcount < 0 || index < 0 || (_count - 1) < (index + Xcount))
             throw new ArgumentOutOfRangeException();
-
-        for (int i = index; i < (index + Xcount); ++i)
-            if (item.Equals(data[i]))
-                return i;*/
+        int i = 0;
+        foreach(T x in this) { 
+            if (item.Equals(x))
+                return i;
+            i++;
+        }
         return -1;
     }
 
     public int IndexOf(T item)
     {
-       /* for (int i = 0; i < _count; ++i)
-            if (item.Equals(data[i]))
-                return i;*/
+        int i = 0;
+        foreach(T x in this) { 
+            if (item.Equals(x))
+                return i;
+            i++;
+        }
         return -1;
     }
 
@@ -233,13 +242,41 @@ public class Deque<T> : IList<T>
     {
         if (index < 0 || _count < index)
             throw new ArgumentOutOfRangeException();
-        /*if (_count == _capacity)
+        if ( (front.block == 0 && front.block_Index == 0) || ( back.block == ( _blockCount-1 ) && back.block_Index > 1020))
             DoubleCapacity();
-        // first shift all elements by one index, note it significantly more practical to shift them from end to the point of insertion
+
+        if(index == _count) {
+            Add(item);
+            return;
+        }
+
+        if(index < (_count / 2)) // shift elements towards front
+            shift_To_Front(index);
+        else  // shift elements towards end
+            shift_To_Back(index);
+        
+        //for (int i = _count - 1; index < i; --i) // copy the element from previous index to here
+        //    data[i] = data[i - 1];
         _count++;
-        for (int i = _count - 1; index < i; --i) // copy the element from previous index to here
-            data[i] = data[i - 1];
-        data[index] = item;*/
+        this[index] = item;
+    }
+
+    private void shift_To_Front(int up_to_a_point) {
+        LBA_Pointer index_out_of_bound = new LBA_Pointer(front.block, front.block_Index);
+        index_out_of_bound.Decrement();
+        dataMap[index_out_of_bound.block][index_out_of_bound.block_Index] = this[0];
+
+        for(int i = 1; i < up_to_a_point; ++i)
+            this[i-1] = this[i];
+    }
+
+    private void shift_To_Back(int up_to_a_point) {
+        LBA_Pointer index_out_of_bound = new LBA_Pointer(back.block, back.block_Index);
+        index_out_of_bound.Increment();
+        dataMap[index_out_of_bound.block][index_out_of_bound.block_Index] = this[_count-1];
+        
+        for(int i = ( _count-1 ) ; up_to_a_point < i; --i)
+            this[i] = this[i-1];
     }
 
     public bool Remove(T item)
