@@ -414,7 +414,7 @@ namespace xUnit_Tests
             }
 
         }
-
+/*
         [Fact]
         public void Test_07_CopyTo_string()
         {
@@ -680,7 +680,7 @@ namespace xUnit_Tests
                 actual = deq[i];
                 Assert.Equal(expected, actual);
             }
-        }
+        }*/
 
     }
 }
