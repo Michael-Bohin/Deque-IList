@@ -120,21 +120,23 @@ public class Deque<T> : IList<T>
     }
 
     private (int block, int block_Index) get_2D_index(int _1D_index) {
-        int block = _1D_index / 1024; //_1D_index >> 10; // divide by 1024 = 2^10 = shift right 10 times !!! as int as number is positive, which indexes must be -> chill
-        int block_Index = _1D_index % 1024; //_1D_index & 0b11_1111_1111;
-        return (block, block_Index);
+        //int block = _1D_index / 1024; //_1D_index >> 10; // divide by 1024 = 2^10 = shift right 10 times !!! as int as number is positive, which indexes must be -> chill
+        //int block_Index = _1D_index % 1024; //_1D_index & 0b11_1111_1111;
+        return ( (_1D_index >> 10) , (_1D_index & 0b11_1111_1111) );
     }
 
     private int get_1D_index(int block, int block_Index) {
-        return (block * 1024) + block_Index;
+        //return (block * 1024) + block_Index;
         //int _1D_index = block * 1024; //block << 10; // multiply by 2^10
         //return _1D_index + block_Index// _1D_index |= block_Index; // logical or add, since block index are guaranted by end_pointer class to be strictly less than 1024
+        return (block << 10) | block_Index;
     }
 
     private int calculate_New_Front_Position() {
-        int middle = _capacity; // next middle is current capacity 
-        int half_of_elements = _count / 2;//_count >> 1; // --> /2
-        return middle - half_of_elements; 
+        //int middle = _capacity; // next middle is current capacity 
+        //int half_of_elements = _count / 2;//_count >> 1; // --> /2
+        //return middle - half_of_elements; 
+        return _capacity - ( _count >> 1 ); 
     }
 
     public T this[int index]  // indexer declaration
