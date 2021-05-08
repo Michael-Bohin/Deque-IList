@@ -27,6 +27,11 @@ public class Deque<T> : IList<T>
         public LBA_Pointer(int block, int block_Index) {
             this.block = block; this.block_Index = block_Index;
         }
+
+        public LBA_Pointer(LBA_Pointer copy) {
+            block = copy.block; 
+            block_Index = copy.block_Index;
+        }
         
         public void Increment() {
             block_Index++;
@@ -149,7 +154,7 @@ public class Deque<T> : IList<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        LBA_Pointer current = new LBA_Pointer(front.block, front.block_Index);
+        LBA_Pointer current = new LBA_Pointer(front);
         for (int i = 0; i < _count; ++i) {
             yield return dataMap[current.block][current.block_Index];
             current.Increment();
@@ -174,7 +179,7 @@ public class Deque<T> : IList<T>
 
     public bool Contains(T x)
     {
-        LBA_Pointer current = new LBA_Pointer(front.block, front.block_Index);
+        LBA_Pointer current = new LBA_Pointer(front);
 
         for (int i = 0; i < _count; ++i) {
             if (x.Equals(dataMap[current.block][current.block_Index]))
@@ -245,64 +250,70 @@ public class Deque<T> : IList<T>
         if ( (front.block == 0 && front.block_Index == 0) || ( back.block == ( _blockCount-1 ) && back.block_Index > 1020))
             DoubleCapacity();
 
-        if(index == _count) {
-            Add(item);
-            return;
-        }
-
-        if(index < (_count / 2)) // shift elements towards front
-            shift_To_Front(index);
-        else  // shift elements towards end
-            shift_To_Back(index);
-        
-        //for (int i = _count - 1; index < i; --i) // copy the element from previous index to here
-        //    data[i] = data[i - 1];
+        //if(index == _count) {Add(item);return;}
+        if(index < (_count / 2)) 
+            shift_To_Front(index); // shift elements towards front
+        else  
+            shift_To_Back(index); // shift elements towards end
         _count++;
         this[index] = item;
     }
 
     private void shift_To_Front(int up_to_a_point) {
-        LBA_Pointer index_out_of_bound = new LBA_Pointer(front.block, front.block_Index);
+        LBA_Pointer index_out_of_bound = new LBA_Pointer(front);
         index_out_of_bound.Decrement();
         dataMap[index_out_of_bound.block][index_out_of_bound.block_Index] = this[0];
 
-        for(int i = 1; i < up_to_a_point; ++i)
+        for(int i = 1; i <= up_to_a_point; ++i)
             this[i-1] = this[i];
+
+        front.Decrement();
     }
 
     private void shift_To_Back(int up_to_a_point) {
-        LBA_Pointer index_out_of_bound = new LBA_Pointer(back.block, back.block_Index);
+        LBA_Pointer index_out_of_bound = new LBA_Pointer(back);
         index_out_of_bound.Increment();
         dataMap[index_out_of_bound.block][index_out_of_bound.block_Index] = this[_count-1];
         
         for(int i = ( _count-1 ) ; up_to_a_point < i; --i)
             this[i] = this[i-1];
+
+        back.Increment();
     }
 
     public bool Remove(T item)
     {   // remove first occurence of the item T from the begining 
         // Remarks
         // If type T implements the IEquatable<T> generic interface, the equality comparer is the Equals method of that interface; otherwise, the default equality comparer is Object.Equals.
-        /*for (int i = 0; i < _count; ++i)
-            if (data[i].Equals(item))
+        int i = 0;
+        foreach(T x in this){
+            if (x.Equals(item))
             {
-                RemoveAt(i); // call own method
+                RemoveAt(i); // call own method 
                 return true;
-            }*/
+            }
+            i++;
+        }
         return false;
-    }
+        // LBA_Pointer current = new LBA_Pointer(front);
+    } 
 
     public void RemoveAt(int index)
     {
-       /* if (IsReadOnly)
+        if (IsReadOnly)
             throw new NotSupportedException();
         if (index < 0 || (_count - 1) < index)
             throw new ArgumentOutOfRangeException();
-        // -> since this collection is indexed, the best way is to overwrite all elements with one higher index, similar to perforaming swaps except, the first element disappear
-        // !! beware to not touch the index at _count -> most of the cases its there but  when _count == _capacity this yields OutOfBoundsExcpetion !! -> the last element may stay where it was -> by decrementing _count by one it is unreachable by outside world and uppon first add, it will get overwritte it exists at two indexes than (after removal: _count and _count+1)
-        for (int i = index; i < (_count - 1); ++i)
-            data[i] = data[i + 1];*/
-        _count--; // job done 😂
+        
+        if(index < (_count / 2)) {
+            for(int i = index; 0 < i; --i) 
+                this[i] = this[ i-1 ];
+            front.Increment();
+        } else  {
+            for(int i = index; i < (_count - 1) ; ++i) 
+                this[i] = this[ i+1 ];
+            back.Decrement();
+        }
+        _count--; // job done 😂😂😂
     }
-
 }

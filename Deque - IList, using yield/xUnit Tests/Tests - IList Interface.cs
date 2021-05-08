@@ -625,7 +625,6 @@ namespace xUnit_Tests
         {
             // Arrange
             string[] test_input = Arrange_String();
-            string[] test_input_line2 = Arrange_String();
             string expected, actual;
             int expected_count, actual_count;
 
@@ -633,13 +632,12 @@ namespace xUnit_Tests
             foreach (string s in test_input)
                 deq.Add(s);
 
-            int insert_to_index =  8;
+            int insert_to_index = 50;
 
             // Act      
-            deq.Insert(insert_to_index, "Ahoj svete"/*test_input_line2[38]*/);
+            deq.Insert(insert_to_index, "Ahoj svete");
 
-            // Assert   --> sude a liche samostatne..
-
+            // Assert
             for (int i = 0; i < insert_to_index; i++)
             {
                 expected = test_input[i];
@@ -647,7 +645,7 @@ namespace xUnit_Tests
                 Assert.Equal(expected, actual);
             }
 
-            expected = "Ahoj svete";//test_input_line2[38];
+            expected = "Ahoj svete";
             actual = deq[insert_to_index];
             Assert.Equal(expected, actual);
 
@@ -662,7 +660,57 @@ namespace xUnit_Tests
             actual_count = deq.Count;
             Assert.Equal(expected_count, actual_count);
         }
-/*
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(6)]
+        [InlineData(7)]
+        [InlineData(8)]
+        [InlineData(9)]
+        [InlineData(10)]
+        public void Test_10_Insert_string_light_02(int insert_to_index)
+        {
+            // Arrange
+            string[] test_input = Arrange_String();
+            string expected, actual;
+            int expected_count, actual_count;
+
+            Deque<string> deq = new Deque<string>();
+            for(int i = 0; i < 10; ++i)
+                deq.Add(test_input[i]);
+
+            // Act      
+            deq.Insert(insert_to_index, "Ahoj svete");
+
+            // Assert
+            for (int i = 0; i < insert_to_index; i++)
+            {
+                expected = test_input[i];
+                actual = deq[i];
+                Assert.Equal(expected, actual);
+            }
+
+            expected = "Ahoj svete";
+            actual = deq[insert_to_index];
+            Assert.Equal(expected, actual);
+
+            for (int i = insert_to_index+1; i < 10; i++)
+            {
+                expected = test_input[i-1];
+                actual = deq[i];
+                Assert.Equal(expected, actual);
+            }
+
+            expected_count = 11;
+            actual_count = deq.Count;
+            Assert.Equal(expected_count, actual_count);
+        }
+
         [Fact]
         public void Test_11_Remove_int()
         {
@@ -719,7 +767,7 @@ namespace xUnit_Tests
                 actual = deq[i];
                 Assert.Equal(expected, actual);
             }
-        }*/
+        }
 
     }
 }
