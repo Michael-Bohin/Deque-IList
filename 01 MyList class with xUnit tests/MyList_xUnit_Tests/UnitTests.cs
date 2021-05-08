@@ -403,7 +403,7 @@ namespace MyList_xUnit_Tests
         }
 
         [Fact]
-        public void Test_07_string()
+        public void Test_07_CopyTo_string()
         {
             // Arrange
             string[] test_input = Arrange_String();

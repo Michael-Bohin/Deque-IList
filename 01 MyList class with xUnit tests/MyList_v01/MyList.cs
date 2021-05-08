@@ -22,7 +22,7 @@ using System.Collections.Generic;
 */
 namespace MyList_v01
 {
-    public class MyList<T>  where T : IComparable<T> //, IList<T>
+    public class MyList<T>/* : IList<T>*/ where T : IComparable<T> 
     {
         private int _count = 0;
         private int _capacity = 100;
@@ -66,7 +66,11 @@ namespace MyList_v01
             for (int i = 0; i < _count; ++i)
                 yield return data[i];
         }
-
+/*
+        IEnumerator<out T> IEnumerable.GetEnumerator() {
+            throw new NotImplementedExcpetion();
+        }
+*/
         public void Clear()
         {
             _count = 0;
