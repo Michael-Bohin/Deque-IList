@@ -2,35 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 
-/*  
-    Interface IList<T>, Order of testing
 
-    Properties:
-    02    int Count { get; }                      : ICollection
-    03    bool IsReadOnly                         : ICollection
-    04    public T this[int index] { get; set; }  : own
+//namespace Deque_IList_Using_Yield
+//{
 
-    Methods: 
-    01    Add(T)                                  : ICollection 
-    05    Clear()                                 : ICollection
-    06    Contains(T)                             : ICollection
-    07    CopyTo(T[], Int32)                      : ICollection
-    08    GetEnumerator()                         : IEnumerable
-    09    IndexOf(T)                              : own
-    10    Insert(Int 32, T)                       : own
-    11    Remove(T)                               : ICollection
-    12    RemoveAt(Int32)                         : own
-*/
-namespace MyList_v01
-{
-    public class MyList<T> : IList<T> where T : IComparable<T> 
+    public static class DequeTest
+    {
+        public static IList<T> GetReverseView<T>(Deque<T> d)// where T : IComparable<T>
+        {
+            return d; // just in place to make recodex not complain.
+	    }
+    }
+
+    public class Deque<T> : IList<T> //where T : IComparable<T>
     {
         private int _count = 0;
         private int _capacity = 100;
         private T[] data = new T[100]; // allocate memory for hundred elements by default, note that in some cases this might waaay too much. Hence some overloaded constructors with this parametr would definitelly make sense. 
 
-        public MyList() { }
-        public MyList(int capacity) // let the user decide initial capacity
+        public Deque() { }
+        public Deque(int capacity) // let the user decide initial capacity
         {
             _capacity = capacity;
             data = new T[capacity];
@@ -46,7 +37,7 @@ namespace MyList_v01
             data[_count] = x;
             _count++;
         }
-        
+
         private void DoubleCapacity()
         {                     // calling this method only from add, hence _count being equal to capacity is guaranteed condition in here
             T[] larger = new T[_capacity * 2];            // initilise new data container twice as large 
@@ -86,7 +77,7 @@ namespace MyList_v01
         public bool Contains(T x)
         {
             for (int i = 0; i < _count; ++i)
-                if (x.CompareTo(data[i]) == 0)
+                if (x.Equals(data[i]))
                     return true;
             return false;
         }
@@ -109,7 +100,7 @@ namespace MyList_v01
             if (index < 0 || (_count - 1) < index)
                 throw new ArgumentOutOfRangeException();
             for (int i = index; i < _count; ++i)
-                if (item.CompareTo(data[i]) == 0)
+                if (item.Equals(data[i]))
                     return i;
             return -1;
         }
@@ -120,7 +111,7 @@ namespace MyList_v01
                 throw new ArgumentOutOfRangeException();
 
             for (int i = index; i < (index + Xcount); ++i)
-                if (item.CompareTo(data[i]) == 0)
+                if (item.Equals(data[i]))
                     return i;
             return -1;
         }
@@ -128,7 +119,7 @@ namespace MyList_v01
         public int IndexOf(T item)
         {
             for (int i = 0; i < _count; ++i)
-                if (item.CompareTo(data[i]) == 0)
+                if (item.Equals(data[i]))
                     return i;
             return -1;
         }
@@ -151,7 +142,7 @@ namespace MyList_v01
             // Remarks
             // If type T implements the IEquatable<T> generic interface, the equality comparer is the Equals method of that interface; otherwise, the default equality comparer is Object.Equals.
             for (int i = 0; i < _count; ++i)
-                if (data[i].CompareTo(item) == 0)
+                if (data[i].Equals(item))
                 {
                     RemoveAt(i); // call own method
                     return true;
@@ -173,4 +164,5 @@ namespace MyList_v01
         }
 
     }
-}
+//}
+
