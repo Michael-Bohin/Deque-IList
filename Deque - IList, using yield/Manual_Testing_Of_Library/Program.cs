@@ -130,6 +130,23 @@ namespace Manual_Testing_Of_Library
             WriteLine(listXX.IndexOf(a));
 
 
+            int x = 5;
+
+            if(x is ValueType) {
+                WriteLine("X is value type!");
+            } else {
+                WriteLine("X is not value type!");
+            }
+
+            List<int> pokus = new List<int>();
+
+            if(pokus is ValueType) {
+                WriteLine("List<int> is value type!");
+            } else {
+                WriteLine("List<int> IS NOT value type!");
+            }
+
+
         }
 
         static void test_ReverseView_RemoveAt() {
