@@ -405,7 +405,6 @@ namespace xUnit_Tests
 
 
             // Act -> test REMOVE
-
             for(int i = 0; i < 500; i++) {
                 deq.Remove( i+1_000_000 );
                 vzorovy_list.Remove( i+1_000_000 );
@@ -434,9 +433,53 @@ namespace xUnit_Tests
             expected_count = vzorovy_list.Count;
             actual_count = deq.Count;
             Assert.Equal(expected_count, actual_count);
+
+            // Act -> test REMOVE -> neexistujici prvky 
+            bool bool_actual, bool_expected;
+            for(int i = 0; i < 500; i++) {
+                bool_actual = deq.Remove( i-100_000_000 );
+                bool_expected = vzorovy_list.Remove( i-100_000_000 );
+                Assert.Equal(bool_expected, bool_actual);
+            }
+
+            for(int i = 0; i < 500; i++) {
+                bool_actual = deq.Remove( i-200_000_000 );
+                bool_expected = vzorovy_list.Remove( i-200_000_000 );
+                Assert.Equal(bool_expected, bool_actual);
+            }
+
+            // Assert
+            for(int i = 0; i < deq.Count; i++) {
+                expected = vzorovy_list[i];
+                actual = deq[i];
+                Assert.Equal(expected, actual);
+            }
+
+            counter = 0;
+            foreach(int i in deq) {
+                expected = vzorovy_list[counter];
+                actual = i;
+                Assert.Equal(expected, actual);
+                counter++;
+            }
+
+            expected_count = vzorovy_list.Count;
+            actual_count = deq.Count;
+            Assert.Equal(expected_count, actual_count);
+
+            // Act and Assert in paralel -> test IndexOf  
+
+            for(int i = -50; i < 50_000; i = i + 10) {
+                expected = vzorovy_list.IndexOf(i);
+                actual = deq.IndexOf(i);
+                Assert.Equal(expected, actual);
+            }
+
+            expected_count = vzorovy_list.Count;
+            actual_count = deq.Count;
+            Assert.Equal(expected_count, actual_count);
+    
         }
-
-
 
     } // end reverse view
 } // end name space 

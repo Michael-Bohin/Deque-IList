@@ -16,8 +16,6 @@ class TooSmallCapacityDemandedException : Exception { }
 
 class InvalidOperationException: Exception { }
 
-class ArgumentOutOfRangeXXXXXXXXXXXException : Exception { }
-
 public class Deque<T> : IList<T>
 {
     class LBA_Pointer // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
@@ -363,16 +361,7 @@ public class Deque<T> : IList<T>
     {
         if(enumeration_In_Process)
             throw new InvalidOperationException();
-        // Remarks:If type T implements the IEquatable<T> generic interface, the equality comparer is the Equals method of that interface; otherwise, the default equality comparer is Object.Equals.
-        //int i = 0;
-        //foreach(T x in this){
-        //    if (x.Equals(item))
-        //    {
-        //        RemoveAt(i); // call own method 
-        //        return true;
-        //    }
-        //    i++;
-        //}
+        
         for(int i = 0; i < _count; ++i) 
             if(this[i].Equals(item))
             {
@@ -380,7 +369,6 @@ public class Deque<T> : IList<T>
                 return true;
             }
 
-        
         return false;
     } 
 
@@ -392,38 +380,24 @@ public class Deque<T> : IList<T>
         if (IsReadOnly)
             throw new NotSupportedException();
         if (index < 0 || (_count - 1) < index)
-            throw new ArgumentOutOfRangeXXXXXXXXXXXException();
+            throw new ArgumentOutOfRangeException();
 
-       // if(north_Is_North) {
-            if(index < (_count / 2)) {
-                for(int i = index; 0 < i; --i) 
-                    this[i] = this[ i-1 ];
-                if(north_Is_North)
-                    front.Increment();
-                else 
-                    back.Increment();
-            } else  {
-                for(int i = index; i < (_count - 1) ; ++i) 
-                    this[i] = this[ i+1 ];
-                if(north_Is_North)
-                    back.Decrement();
-                else 
-                    front.Decrement();
-            }
 
-      //  } else {
-/*
-            if(index < (_count / 2)) {
-                for(int i = index; 0 < i; --i) 
-                    this[i] = this[ i-1 ];
+        if(index < (_count / 2)) {
+            for(int i = index; 0 < i; --i) 
+                this[i] = this[ i-1 ];
+            if(north_Is_North)
+                front.Increment();
+            else 
                 back.Increment();
-            } else  {
-                for(int i = index; i < (_count - 1) ; ++i) 
-                    this[i] = this[ i+1 ];
+        } else  {
+            for(int i = index; i < (_count - 1) ; ++i) 
+                this[i] = this[ i+1 ];
+            if(north_Is_North)
+                back.Decrement();
+            else 
                 front.Decrement();
-            }
-
-        }*/
+        }
 
         _count--; // job done 😂😂😂
     }
