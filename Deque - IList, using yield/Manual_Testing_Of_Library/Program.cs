@@ -11,8 +11,8 @@ namespace Manual_Testing_Of_Library
             printMenu();
             while(true) {
                 string s = ReadLine().Trim();
-                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6") {
-                    WriteLine("Unrecognized command. Kindly type either '1' up to '6'");
+                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6" && s!="7" && s!="8" && s!="9") {
+                    WriteLine("Unrecognized command. Kindly type either '1' up to '7'");
                 } else {
                     switch(s) {
                         case "1": test_Insert_And_RemoveAt(); break;
@@ -21,7 +21,9 @@ namespace Manual_Testing_Of_Library
                         case "4": test_ReverseView_Foreach(); break;
                         case "5": test_ReverseView_Insert(); break;
                         case "6": test_ReverseView_RemoveAt(); break;
-
+                        case "7": test_RevverseView_IndexOutOfRangeException_pres_Add(); break;
+                        case "8": test_ReverseView_Add_X_Elements(1000); break;
+                        case "9": test_ReverseView_RemoveAt(); break;
                         default: break;
                     }
                     break;
@@ -38,7 +40,94 @@ namespace Manual_Testing_Of_Library
             WriteLine("4: ReversieView operation 'Foreach'");
             WriteLine("5: ReverseView operation 'Insert'");
             WriteLine("6: ReverseView operation 'RemoveAt'");
+            WriteLine("7: ReverseView operation 'IndexOutOfRangeException_pres_Add'");
+            WriteLine("8: ReverseView Add X Elements");
+            WriteLine("9: ReverseView Remove At\n\n");
         } 
+
+        static void test_ReverseView_RemoveAt() {
+            int List_Size = 10000;
+             // Arrange
+            List<int> test_input = new List<int>();
+            Deque<int> deq = new Deque<int>();
+            deq.Reverse_North_Pole();
+            
+            for(int i = 0; i < List_Size; ++i) {
+                test_input.Add(i);
+                deq.Add(i);
+            }
+
+            //int expected, actual, expected_count, actual_count;
+
+            // Act
+            
+            for (int i = deq.Count - 2; -1 < i ; i = i - 2) {
+                test_input.RemoveAt(i);
+                deq.RemoveAt(i);
+            }
+
+           // Assert
+            WriteLine("State after action:\n");
+            for(int i = 0; i < deq.Count; ++i) 
+                WriteLine($"    Element {i}:    Deque: {deq[i]}        test_input: {test_input[i]}");
+            
+            WriteLine($"\n    Deque contains {deq.Count} elements,  test_input contains {test_input.Count} elements.\n\n"); 
+            WriteLine("______________________________________________________________________\n");
+        }
+
+        static void test_ReverseView_Add_X_Elements(int count) {
+            // Arrange
+            List<int> test_input = new List<int>();
+            for(int i = 0; i < count; ++i)
+                test_input.Add(i);
+            Deque<int> deq = new Deque<int>();
+            //int expected, actual, expected_count, actual_count;
+
+            // Act
+
+            deq.Reverse_North_Pole();
+            for (int i = 0; i < count; ++i) 
+                deq.Add(test_input[i]);
+            deq.Reverse_North_Pole();
+            for (int i = 0; i < count; ++i) 
+                deq.Add(test_input[i]);
+            deq.Reverse_North_Pole();
+
+            for (int i = 0; i < 7000; ++i) 
+                deq.Add(i);
+
+
+            // Assert
+            WriteLine("State after action:\n");
+            for(int i = 0; i < deq.Count; ++i) 
+                WriteLine($"    Element {i}: Deque: {deq[i]}");
+            
+            WriteLine($"\n    Deque contains {deq.Count} elements\n\n"); 
+            WriteLine("______________________________________________________________________\n");
+        
+            
+        }
+
+        static void test_RevverseView_IndexOutOfRangeException_pres_Add() {
+            // Arrange
+            Deque<string> d = new Deque<string>();
+            string[] input_A = new string[] { "A-1", "A-2", "A-3", "A-4", "A-5", "A-6", "A-7", "A-8", "A-9", "A-10" };
+            string[] input_B = new string[] { "BBB >> 1", "BBB >> 2", "BBB >> 3", "BBB >> 4", "BBB >> 5", "BBB >> 6", "BBB >> 7", "BBB >> 8", "BBB >> 9", "BBB >> 10" };
+
+            // Act
+            d.Reverse_North_Pole();
+            for(int k = 0; k<1_000 ; ++k )
+                for(int i = 0; i<10 ; ++i )
+                    d.Add(input_B[i]);
+
+            // Assert
+            WriteLine("State after action:\n");
+            for(int i = 0; i < d.Count; ++i) 
+                WriteLine($"    Element {i}: Deque: {d[i]}");
+            
+            WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
+            WriteLine("______________________________________________________________________\n");
+        }
 
         static void test_Insert_And_RemoveAt() {
             Deque<string> d = new Deque<string>();
@@ -317,17 +406,46 @@ namespace Manual_Testing_Of_Library
             
             WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
         }
-
+/*
         static void test_ReverseView_RemoveAt() {
             WriteLine("   >>> Starting ReverseView Tests : RemoveAt <<< \n\n"); 
-            // Arrange 
+            for(int k = 0; k < 10; k++) {
+                // Arrange 
+                string[] input_B = new string[] { "BBB >> 1", "BBB >> 2", "BBB >> 3", "BBB >> 4", "BBB >> 5", "BBB >> 6", "BBB >> 7", "BBB >> 8", "BBB >> 9", "BBB >> 10" };
 
-            // Act
+                Deque<string> d = new Deque<string>();
 
-            // Assert
+                for(int i = 0; i < 10; ++i) {
+                    d.Add(input_B[i]);
+                }
+
+                // Act
+
+                d.Reverse_North_Pole();
+
+                // info:
+                WriteLine($"State before removal of index {k}:\n");
+                for(int i = 0; i < d.Count; ++i) 
+                    WriteLine($"    Element {i}: Deque: {d[i]}");
+                
+                WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
+
+                // Act 
+
+                d.RemoveAt(k);
 
 
-        }
+                // Assert
+
+                WriteLine("State after removal:\n");
+                for(int i = 0; i < d.Count; ++i) 
+                    WriteLine($"    Element {i}: Deque: {d[i]}");
+                
+                WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
+
+                WriteLine("______________________________________________________________________\n");
+            }
+        }*/
     }
 
 }
