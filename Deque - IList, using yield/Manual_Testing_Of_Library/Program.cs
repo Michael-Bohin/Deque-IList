@@ -11,8 +11,8 @@ namespace Manual_Testing_Of_Library
             printMenu();
             while(true) {
                 string s = ReadLine().Trim();
-                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6" && s!="7" && s!="8" && s!="9") {
-                    WriteLine("Unrecognized command. Kindly type either '1' up to '7'");
+                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6" && s!="7" && s!="8" && s!="9" && s!="10") {
+                    WriteLine("Unrecognized command. Kindly type either '1' up to '10'");
                 } else {
                     switch(s) {
                         case "1": test_Insert_And_RemoveAt(); break;
@@ -24,6 +24,7 @@ namespace Manual_Testing_Of_Library
                         case "7": test_RevverseView_IndexOutOfRangeException_pres_Add(); break;
                         case "8": test_ReverseView_Add_X_Elements(1000); break;
                         case "9": test_ReverseView_RemoveAt(); break;
+                        case "10": test_Null_Reference_Error_Hunt(); break;
                         default: break;
                     }
                     break;
@@ -42,8 +43,94 @@ namespace Manual_Testing_Of_Library
             WriteLine("6: ReverseView operation 'RemoveAt'");
             WriteLine("7: ReverseView operation 'IndexOutOfRangeException_pres_Add'");
             WriteLine("8: ReverseView Add X Elements");
-            WriteLine("9: ReverseView Remove At\n\n");
+            WriteLine("9: ReverseView Remove At");
+            WriteLine("10: To hunt null reference error \n\n");
         } 
+
+        static void test_Null_Reference_Error_Hunt() {
+            string[] test_vstup = new string[] { "ahoj", "svete", "hunt", "bugu", null, null, "abc", "def"};
+            Deque<string> d = new Deque<string>();
+            List<string> list = new List<string>();
+            foreach(string s in test_vstup) {
+                d.Add(s);
+                list.Add(s);
+            }
+
+            foreach(string s in d) {
+                WriteLine(s);
+            }
+
+            if(d.Contains("nejaky neexistujici string"))
+                WriteLine("Obsahuje!");
+            else 
+                WriteLine("Neobashuje!");
+
+            if(d.Contains("nejaky neexistujici string"))
+                WriteLine("Obsahuje!");
+            else 
+                WriteLine("Neobashuje!");
+
+
+           /* d.Clear();
+            list.Clear();
+            WriteLine("Count:");
+            WriteLine(d.Count);
+            WriteLine(list.Count);
+            WriteLine("index 0:");
+            WriteLine(d[0]);
+            WriteLine(list[0]);*/
+            Deque<List<int>> dalsi = new Deque<List<int>>();
+            List<int> a = new List<int>();
+            List<int> b = new List<int>();
+            List<int> c = new List<int>();
+
+            List<int> e = new List<int>();
+            List<int> f = new List<int>();
+            List<int> g = new List<int>();
+            for(int i = 0; i < 5; i++) {
+                a.Add(i);
+                b.Add(i);
+                c.Add(i);
+
+                e.Add(i);
+                f.Add(i);
+                g.Add(i);
+            }
+            dalsi.Add(a);
+            dalsi.Add(b);
+            dalsi.Add(c);
+
+            dalsi.Add(e);
+            dalsi.Add(f);
+            dalsi.Add(g);
+            dalsi.Add(null);
+
+            if(dalsi.Contains(a)) {
+                WriteLine("a obsahuje");
+            } else {
+                WriteLine("a NEOBSAHUJE");
+            }
+
+            WriteLine(dalsi.IndexOf(null));
+
+            WriteLine(dalsi.IndexOf(a));
+
+            WriteLine(dalsi.IndexOf(b));
+
+            WriteLine(dalsi.IndexOf(c));
+
+            WriteLine(dalsi.IndexOf(g));
+
+
+            List<List<int>> listXX = new List<List<int>>();
+            listXX.Add(null);
+            listXX.Add(a);
+            listXX.Add(b);
+            WriteLine(listXX.IndexOf(null));
+            WriteLine(listXX.IndexOf(a));
+
+
+        }
 
         static void test_ReverseView_RemoveAt() {
             int List_Size = 10000;
@@ -406,46 +493,7 @@ namespace Manual_Testing_Of_Library
             
             WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
         }
-/*
-        static void test_ReverseView_RemoveAt() {
-            WriteLine("   >>> Starting ReverseView Tests : RemoveAt <<< \n\n"); 
-            for(int k = 0; k < 10; k++) {
-                // Arrange 
-                string[] input_B = new string[] { "BBB >> 1", "BBB >> 2", "BBB >> 3", "BBB >> 4", "BBB >> 5", "BBB >> 6", "BBB >> 7", "BBB >> 8", "BBB >> 9", "BBB >> 10" };
 
-                Deque<string> d = new Deque<string>();
-
-                for(int i = 0; i < 10; ++i) {
-                    d.Add(input_B[i]);
-                }
-
-                // Act
-
-                d.Reverse_North_Pole();
-
-                // info:
-                WriteLine($"State before removal of index {k}:\n");
-                for(int i = 0; i < d.Count; ++i) 
-                    WriteLine($"    Element {i}: Deque: {d[i]}");
-                
-                WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
-
-                // Act 
-
-                d.RemoveAt(k);
-
-
-                // Assert
-
-                WriteLine("State after removal:\n");
-                for(int i = 0; i < d.Count; ++i) 
-                    WriteLine($"    Element {i}: Deque: {d[i]}");
-                
-                WriteLine($"\n    Deque contains {d.Count} elements\n\n"); 
-
-                WriteLine("______________________________________________________________________\n");
-            }
-        }*/
     }
 
 }

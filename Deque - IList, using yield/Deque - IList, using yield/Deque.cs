@@ -134,8 +134,6 @@ public class Deque<T> : IList<T>
         if(enumeration_In_Process)
             throw new InvalidOperationException();
 
-
-
         int data_Blocks_Used = dataMap.Length;
         T[][] larger_dataMap = new T[data_Blocks_Used << 1][]; // double the count using shift operator // notice this would eventualy run out at 2^31, which for most purposes is ok, but definitelly makes it be not infinite 
         for(int i = 0; i < larger_dataMap.Length; ++i)
@@ -190,6 +188,9 @@ public class Deque<T> : IList<T>
         // variable front_plus_offset changed to head_with_offset in order to better catch its semantics with reverse view
         get {
             //WriteLine($"Getter reporting! Recieved call for index: {index}");
+            if (index < 0 || (_count - 1) < index)
+                throw new ArgumentOutOfRangeException();
+
             int head_with_offset = north_Is_North ? ( ( ( front.block << 10 ) | front.block_Offset ) + index  ) : ( ( ( back.block << 10 ) | back.block_Offset ) - index ) ;
             return dataMap[ head_with_offset >> 10 ][ head_with_offset & 0b11_1111_1111 ]; 
         }
@@ -197,6 +198,8 @@ public class Deque<T> : IList<T>
         set {
             if(enumeration_In_Process)
                 throw new InvalidOperationException();
+            if (index < 0 || (_count - 1) < index)
+                throw new ArgumentOutOfRangeException();
 
             int head_with_offset = north_Is_North ? ( ( ( front.block << 10 ) | front.block_Offset ) + index  ) : ( ( ( back.block << 10 ) | back.block_Offset ) - index ) ;
             dataMap[ head_with_offset >> 10 ][ head_with_offset & 0b11_1111_1111 ] = value;
@@ -237,17 +240,7 @@ public class Deque<T> : IList<T>
         back.Set_New_Coordinates(0, 511);
     }
 
-    public bool Contains(T x)
-    {
-        LBA_Pointer current = north_Is_North ? new LBA_Pointer(front) : new LBA_Pointer(back);
-
-        for (int i = 0; i < _count; ++i) {
-            if (x.Equals(dataMap[current.block][current.block_Offset]))
-                return true;
-            current.Increment();   
-        }
-        return false;
-    }
+    public bool Contains(T x) => IndexOf(x) != 1;
 
     public void CopyTo(T[] target, int fromIndex)
     {
@@ -294,23 +287,32 @@ public class Deque<T> : IList<T>
 
     public int IndexOf(T item)
     {
-        int i = 0;
-        foreach(T x in this) { 
-            if (item.Equals(x))
-                return i;
-            i++;
+        if(item == null) {
+            for(int i = 0; i < _count; ++i)
+                if(this[i] == null)
+                    return i;
+        } else {
+            for(int i = 0; i < _count; ++i)
+                if (item.Equals(this[i]))
+                    return i;
         }
+        
         return -1;
     }
 
     public void Insert(int index, T item)
     {
+        if(index == _count) {
+            // in order to evade argument out of range exception, if count is equal to index, redirect to add and return 
+            Add(item);
+            return;
+        }
+
         if (index < 0 || _count < index)
             throw new ArgumentOutOfRangeException();
 
         if(enumeration_In_Process)
             throw new InvalidOperationException();
-
 
         if ( (front.block == 0 && front.block_Offset == 0) || ( back.block == ( _blockCount-1 ) && back.block_Offset > 1020))
             DoubleCapacity();
@@ -361,6 +363,16 @@ public class Deque<T> : IList<T>
     {
         if(enumeration_In_Process)
             throw new InvalidOperationException();
+
+        if( item == null ) {
+            for(int i = 0; i < _count; ++i) 
+                if(this[i] == null)
+                    {
+                        RemoveAt(i); // call own method 
+                        return true;
+                    }
+            return false;
+        }
         
         for(int i = 0; i < _count; ++i) 
             if(this[i].Equals(item))
@@ -402,5 +414,3 @@ public class Deque<T> : IList<T>
         _count--; // job done 😂😂😂
     }
 }
-
-
