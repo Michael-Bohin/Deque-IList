@@ -7,7 +7,8 @@ public static class DequeTest
 {
     public static IList<T> GetReverseView<T>(Deque<T> d)
     {
-        return d; // just in place to make recodex not complain.
+        d.Reverse_North_Pole();
+        return d; 
     }
 }
 
@@ -19,6 +20,8 @@ public class Deque<T> : IList<T>
     {
         public int block { get; private set; }
         public int block_Index  { get; private set; }
+        public bool north_Is_North = true;
+
         public LBA_Pointer() { 
             block = 0; // index 0 of first block
             block_Index = 511;
@@ -34,18 +37,35 @@ public class Deque<T> : IList<T>
         }
         
         public void Increment() {
-            block_Index++;
-            if(block_Index == 1024) {
-                block++;
-                block_Index = 0;
+            if(north_Is_North) {
+                block_Index++;
+                if(block_Index == 1024) {
+                    block++;
+                    block_Index = 0;
+                }
+                
+            } else {
+                block_Index--;
+                if(block_Index == -1) {
+                    block--;
+                    block_Index = 1023;
+                }
             }
         }
 
         public void Decrement() {
-            block_Index--;
-            if(block_Index == -1) {
-                block--;
-                block_Index = 1023;
+            if(north_Is_North) {
+                block_Index--;
+                if(block_Index == -1) {
+                    block--;
+                    block_Index = 1023;
+                }
+            } else {
+                block_Index++;
+                if(block_Index == 1024) {
+                    block++;
+                    block_Index = 0;
+                }
             }
         }
 
@@ -60,6 +80,7 @@ public class Deque<T> : IList<T>
     private LBA_Pointer front = new LBA_Pointer();
     private LBA_Pointer back = new LBA_Pointer();
     private T[][] dataMap = new T[1][];
+    private bool north_Is_North = true;
 
 
     public Deque() {
@@ -77,8 +98,9 @@ public class Deque<T> : IList<T>
     }
 
     public int Count => _count;
-
     public bool IsReadOnly => false; // nobody told us to forbid addition and removal of elements after creation
+   // public bool North_is_North() => _North_Is_North;
+   // public void Reverse_North_Pole() => _North_Is_North = _North_Is_North ? false : true;
 
     public void Add(T x)
     {
@@ -119,6 +141,23 @@ public class Deque<T> : IList<T>
         front.Set_New_Coordinates(blockZero, 0);
     }
 
+    public void Reverse_North_Pole() {
+        // swap front and back
+        int block = front.block;
+        int block_Index = front.block_Index;
+        front.Set_New_Coordinates(back.block, back.block_Index);
+
+        back.Set_New_Coordinates(block, block_Index);
+        // swap north pole
+        if(north_Is_North)
+            north_Is_North = false;
+        else 
+            north_Is_North = true;
+
+        front.north_Is_North = north_Is_North;
+        back.north_Is_North = north_Is_North;
+    }
+
     private (int block, int block_Index) get_2D_index(int _1D_index) {
         //int block = _1D_index / 1024; //_1D_index >> 10; // divide by 1024 = 2^10 = shift right 10 times !!! as int as number is positive, which indexes must be -> chill
         //int block_Index = _1D_index % 1024; //_1D_index & 0b11_1111_1111;
@@ -138,7 +177,7 @@ public class Deque<T> : IList<T>
         //return middle - half_of_elements; 
         return _capacity - ( _count >> 1 ); 
     }
-
+/*
     public T this[int index]  // indexer declaration
     {
         get {
@@ -153,6 +192,22 @@ public class Deque<T> : IList<T>
             dataMap[block][block_Index] = value;
         }
     }
+*/
+
+    public T this[int index]  // indexer declaration
+    //(int block, int block_Index) = get_2D_index(front_plus_offset);
+    {
+        get {
+            int front_plus_offset = ( ( front.block << 10 ) | front.block_Index ) + index;
+            return dataMap[ front_plus_offset >> 10 ][ front_plus_offset & 0b11_1111_1111 ]; 
+        }
+
+        set {
+            int front_plus_offset = ( ( front.block << 10 ) | front.block_Index ) + index ;
+            dataMap[ front_plus_offset >> 10 ][ front_plus_offset & 0b11_1111_1111 ] = value;
+        }
+    }
+
 
     public IEnumerator<T> GetEnumerator()
     {
