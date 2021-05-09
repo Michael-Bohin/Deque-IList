@@ -125,7 +125,7 @@ namespace Manual_Testing_Of_Library
             List<List<int>> listXX = new List<List<int>>();
             listXX.Add(null);
             listXX.Add(a);
-            listXX.Add(b);
+
             WriteLine(listXX.IndexOf(null));
             WriteLine(listXX.IndexOf(a));
 
@@ -143,7 +143,7 @@ namespace Manual_Testing_Of_Library
             if(pokus is ValueType) {
                 WriteLine("List<int> is value type!");
             } else {
-                WriteLine("List<int> IS NOT value type!");
+                WriteLine("List<int> IS NOT cvalue type!");
             }
 
 
