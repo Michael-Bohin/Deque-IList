@@ -484,7 +484,7 @@ public class Deque<T> : IDeque<T>
 
     public bool ZkusNahlednoutZacatek(out T result)
     {
-        if(_count == 0) // set result to default value and reutnr false 
+        if(_count == 0) // set result to default value and return false 
         {
             result = default(T);
             return false;
