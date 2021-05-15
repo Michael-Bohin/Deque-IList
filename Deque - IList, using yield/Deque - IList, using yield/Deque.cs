@@ -3,10 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using static System.Console;
 
-public static class DequeTest
-{
-    public static IList<T> GetReverseView<T>(Deque<T> d)
-    {
+public static class DequeTest {
+    public static IList<T> GetReverseView<T>(Deque<T> d) {
         d.Reverse_North_Pole();
         return d; 
     }
@@ -19,10 +17,10 @@ interface IDeque<T> : IList<T>
     void Reverse_North_Pole();
 
     T RemoveFront ();
-    void AddFront (T item);
+    void EnqueueFront (T item);
 
     T RemoveBack();
-    void AddBack (T item);
+    void EnqueueBack (T item);
 
     bool TryPeekFront (out T result);
     bool TryPeekBack (out T result);
@@ -47,63 +45,61 @@ interface IDeque<T> : IList<T>
 class TooSmallCapacityDemandedException : Exception { }
 class InvalidOperationException: Exception { }
 
-public class Deque<T> : IDeque<T>
-{
-    class LBA_Pointer // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
-    {
-        public int block { get; private set; }
-        public int block_Offset { get; private set; }
-        public bool north_Is_North = true;
+class LBA_Pointer { // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
+    public int block { get; private set; }
+    public int block_Offset { get; private set; }
+    public bool north_Is_North = true;
 
-        public LBA_Pointer() {
-            block = 0; // index 0 of first block
-            block_Offset = 511;
-        }
-        public LBA_Pointer(int block, int block_Offset) {
-            this.block = block; this.block_Offset = block_Offset;
-        }
+    public LBA_Pointer() {
+        block = 0; // index 0 of first block
+        block_Offset = 511;
+    }
+    public LBA_Pointer(int block, int block_Offset) {
+        this.block = block; this.block_Offset = block_Offset;
+    }
 
-        public LBA_Pointer(LBA_Pointer copy) {
-            block = copy.block;
-            block_Offset = copy.block_Offset;
-            north_Is_North = copy.north_Is_North;
-        }
+    public LBA_Pointer(LBA_Pointer copy) {
+        block = copy.block;
+        block_Offset = copy.block_Offset;
+        north_Is_North = copy.north_Is_North;
+    }
 
-        public void Increment() {
-            if (north_Is_North)
-                _Increment();
-            else
-                _Decrement();
-        }
+    public void Increment() {
+        if (north_Is_North)
+            _Increment();
+        else
+            _Decrement();
+    }
 
-        public void Decrement() {
-            if (north_Is_North)
-                _Decrement();
-            else
-                _Increment();
-        }
+    public void Decrement() {
+        if (north_Is_North)
+            _Decrement();
+        else
+            _Increment();
+    }
 
-        public void _Increment() {
-            block_Offset++;
-            if (block_Offset == 1024) {
-                block++;
-                block_Offset = 0;
-            }
-        }
-
-        public void _Decrement() {
-            block_Offset--;
-            if (block_Offset == -1) {
-                block--;
-                block_Offset = 1023;
-            }
-        }
-
-        public void Set_New_Coordinates(int block, int block_Offset) {
-            this.block = block; this.block_Offset = block_Offset;
+    public void _Increment() {
+        block_Offset++;
+        if (block_Offset == 1024) {
+            block++;
+            block_Offset = 0;
         }
     }
 
+    public void _Decrement() {
+        block_Offset--;
+        if (block_Offset == -1) {
+            block--;
+            block_Offset = 1023;
+        }
+    }
+
+    public void Set_New_Coordinates(int block, int block_Offset) {
+        this.block = block; this.block_Offset = block_Offset;
+    }
+}
+
+public class Deque<T> : IDeque<T> {
     private int _count = 0;
     private int _capacity = 1024;
     private int _blockCount = 1;
@@ -112,7 +108,6 @@ public class Deque<T> : IDeque<T>
     private T[][] dataMap = new T[1][];
     private bool north_Is_North = true;
     private bool enumeration_In_Process = false;
-
 
     public Deque() {
         dataMap[0] = new T[0b_100_0000_0000]; // allocate memory for hundred elements by default, note that in some cases this might waaay too much. Hence some overloaded constructors with this parametr would definitelly make sense. 
@@ -169,7 +164,7 @@ public class Deque<T> : IDeque<T>
         for (int i = 0; i < larger_dataMap.Length; ++i)
             larger_dataMap[i] = new T[0b_100_0000_0000];
 
-        int blockZero = _blockCount == 1 ? 1 : larger_dataMap.Length / 2;
+        int blockZero = _blockCount == 1 ? 1 : larger_dataMap.Length >> 1;
 
         LBA_Pointer current = new LBA_Pointer(blockZero, 0);
         if (!north_Is_North)
@@ -264,10 +259,7 @@ public class Deque<T> : IDeque<T>
         back.Set_New_Coordinates(0, 511);
     }
 
-    public bool Contains(T x) => IndexOf(x) != 1;
-
-    public void CopyTo(T[] target, int fromIndex)
-    {
+    public void CopyTo(T[] target, int fromIndex) {
         // exception: 0. if target is null 1. index is negative, 2. there is not enough space for all elements from start index to end of given array
         if (target == null)
             throw new ArgumentNullException();
@@ -283,48 +275,9 @@ public class Deque<T> : IDeque<T>
         }
     }
 
-    public int IndexOf(T item, int index)
-    {
-        if (index < 0 || (_count - 1) < index)
-            throw new ArgumentOutOfRangeException();
-        if (item == null)
-        {
-            for (int i = 0; i < _count; ++i)
-                if (this[i] == null)
-                    return i;
-        }
-        else
-        {
-            for (int i = 0; i < _count; ++i)
-                if (item.Equals(this[i]))
-                    return i;
-        }
-        return -1;
-    }
+    public bool Contains(T x) => IndexOf(x) != 1;
 
-    public int IndexOf(T item, int index, int Xcount)
-    {   // prepended count with X in order to not confuse it with class' property _count and Count
-        if (Xcount < 0 || index < 0 || (_count - 1) < (index + Xcount))
-            throw new ArgumentOutOfRangeException();
-
-        if (item == null)
-        {
-            for (int i = 0; i < _count; ++i)
-                if (this[i] == null)
-                    return i;
-        }
-        else
-        {
-            for (int i = 0; i < _count; ++i)
-                if (item.Equals(this[i]))
-                    return i;
-        }
-
-        return -1;
-    }
-
-    public int IndexOf(T item)
-    {
+    public int IndexOf(T item) {
         if (item == null) {
             for (int i = 0; i < _count; ++i)
                 if (this[i] == null)
@@ -334,16 +287,12 @@ public class Deque<T> : IDeque<T>
                 if (item.Equals(this[i]))
                     return i;
         }
-
         return -1;
     }
 
-    public void Insert(int index, T item)
-    {
-        if (index == _count) // in order to evade argument out of range exception, if count is equal to index, redirect to add and return 
-        { 
-            Add(item);
-            return;
+    public void Insert(int index, T item) {
+        if (index == _count) { // in order to evade argument out of range exception, if count is equal to index, redirect to add and return 
+            Add(item); return;
         }
 
         if (index < 0 || _count < index)
@@ -355,57 +304,41 @@ public class Deque<T> : IDeque<T>
         if ((front.block == 0 && front.block_Offset == 0) || (back.block == (_blockCount - 1) && back.block_Offset > 1020))
             DoubleCapacity();
 
-        if (index < (_count / 2))
+        _count++;
+        if (index < (_count >> 1))
             shift_To_Front(index); // shift elements towards front
         else
             shift_To_Back(index); // shift elements towards end
-        _count++;
-       this[index] = item;
+        this[index] = item;
     }
 
     private void shift_To_Front(int up_to_a_point) {
-
-        if (north_Is_North) {
-            LBA_Pointer index_out_of_bound = new LBA_Pointer(front);
-            index_out_of_bound.Decrement();
-            dataMap[index_out_of_bound.block][index_out_of_bound.block_Offset] = this[0];
-            for (int i = 1; i <= up_to_a_point; ++i)
-                this[i - 1] = this[i];
+        if (north_Is_North)
             front.Decrement();
-        } else {
-            LBA_Pointer index_out_of_bound = new LBA_Pointer(back);
-            index_out_of_bound.Decrement();
-            dataMap[index_out_of_bound.block][index_out_of_bound.block_Offset] = this[0];
-            for (int i = 1; i <= up_to_a_point; ++i)
-                this[i - 1] = this[i];
+        else 
             back.Decrement();
 
-        }
+        for (int i = 0; i <= up_to_a_point; ++i)
+            this[i] = this[ i+1 ];
     }
 
     private void shift_To_Back(int up_to_a_point) {
-        LBA_Pointer index_out_of_bound = north_Is_North ? new LBA_Pointer(back) : new LBA_Pointer(front);
-        index_out_of_bound.Increment();
-        dataMap[index_out_of_bound.block][index_out_of_bound.block_Offset] = this[_count - 1];
-
-        for (int i = (_count - 1); up_to_a_point < i; --i)
-            this[i] = this[i - 1];
-
         if (north_Is_North)
             back.Increment();
         else
             front.Increment();
+
+        for (int i = (_count-1 ); up_to_a_point < i; --i)
+            this[i] = this[ i-1 ];
     }
 
-    public bool Remove(T item)
-    {
+    public bool Remove(T item) {
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
         if (item == null) {
             for (int i = 0; i < _count; ++i)
-                if (this[i] == null)
-                {
+                if (this[i] == null) {
                     RemoveAt(i); // call own method 
                     return true;
                 }
@@ -413,22 +346,20 @@ public class Deque<T> : IDeque<T>
         }
 
         for (int i = 0; i < _count; ++i)
-            if (this[i].Equals(item))
-            {
+            if (this[i].Equals(item)) {
                 RemoveAt(i); // call own method 
                 return true;
             }
-
         return false;
     }
 
-    public void RemoveAt(int index)
-    {
+    public void RemoveAt(int index) {
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
         if (IsReadOnly)
             throw new NotSupportedException();
+
         if (index < 0 || (_count - 1) < index)
             throw new ArgumentOutOfRangeException();
 
@@ -451,16 +382,15 @@ public class Deque<T> : IDeque<T>
     }
 
     public T RemoveFront() => OdeberZacatek();
-    public void AddFront(T item) => ZafrontiZacatek(item);
+    public void EnqueueFront(T item) => ZafrontiZacatek(item);
     public T RemoveBack() => OdeberKonec();
-    public void AddBack(T item) => ZafrontiKonec(item);
+    public void EnqueueBack(T item) => ZafrontiKonec(item);
     public bool TryPeekFront(out T result) => ZkusNahlednoutZacatek(out result);
     public bool TryPeekBack(out T result) => ZkusNahlednoutKonec(out result);
     public T PeekFront() => NahledniZacatek();
     public T PeekBack() => NahledniKonec();
 
-    public T OdeberZacatek()
-    {
+    public T OdeberZacatek() {
         if(_count == 0)
             throw new InvalidOperationException();
 
@@ -472,8 +402,7 @@ public class Deque<T> : IDeque<T>
     public void ZafrontiZacatek(T item) => Insert(0, item);
     public void ZafrontiKonec(T item) => Add(item);
 
-    public T OdeberKonec()
-    {
+    public T OdeberKonec() {
         if (_count == 0)
             throw new InvalidOperationException();
 
@@ -482,10 +411,8 @@ public class Deque<T> : IDeque<T>
         return back;
     }
 
-    public bool ZkusNahlednoutZacatek(out T result)
-    {
-        if(_count == 0) // set result to default value and return false 
-        {
+    public bool ZkusNahlednoutZacatek(out T result) {
+        if(_count == 0) { // set result to default value and return false 
             result = default(T);
             return false;
         }
@@ -493,10 +420,8 @@ public class Deque<T> : IDeque<T>
         return true;
     }
 
-    public bool ZkusNahlednoutKonec(out T result)
-    {
-        if (_count == 0) // set result to default value and reutnr false 
-        {
+    public bool ZkusNahlednoutKonec(out T result) {
+        if (_count == 0) { // set result to default value and reutnr false 
             result = default(T);
             return false;
         }
@@ -504,15 +429,13 @@ public class Deque<T> : IDeque<T>
         return true;
     }
 
-    public T NahledniZacatek()
-    {
+    public T NahledniZacatek() {
         if (_count == 0)
             throw new InvalidOperationException();
         return this[0];
     }
 
-    public T NahledniKonec()
-    {
+    public T NahledniKonec() {
         if (_count == 0)
             throw new InvalidOperationException();
         return this[_count-1];
