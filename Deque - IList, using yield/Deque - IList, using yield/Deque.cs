@@ -360,7 +360,7 @@ public class Deque<T> : IDeque<T>
         else
             shift_To_Back(index); // shift elements towards end
         _count++;
-        this[index] = item;
+       this[index] = item;
     }
 
     private void shift_To_Front(int up_to_a_point) {

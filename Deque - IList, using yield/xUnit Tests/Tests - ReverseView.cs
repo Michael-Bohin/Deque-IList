@@ -403,7 +403,6 @@ namespace xUnit_Tests
             actual_count = deq.Count;
             Assert.Equal(expected_count, actual_count);
 
-
             // Act -> test REMOVE
             for(int i = 0; i < 500; i++) {
                 deq.Remove( i+1_000_000 );
