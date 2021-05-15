@@ -141,6 +141,14 @@ public class Deque<T> : IDeque<T> {
             larger_dataMap[i] = new T[0b_100_0000_0000];
 
         int blockZero = _blockCount == 1 ? 1 : larger_dataMap.Length >> 1;
+        // move front towards edge of dataMap by half of count (in order to have equal capacity at both ends of deque)
+        if(blockZero > 1) {
+            int quarter = _blockCount >> 1;
+            if(north_Is_North) 
+                blockZero -= quarter;
+            else 
+                blockZero += quarter;
+        }
         LBA_Pointer current = new LBA_Pointer(blockZero, 0);
 
         foreach (T item in this) {
