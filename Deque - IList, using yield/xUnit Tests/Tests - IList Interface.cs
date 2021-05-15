@@ -358,24 +358,24 @@ namespace xUnit_Tests
         {
             // Arrange
             int[] test_input = Arrange_Int();
-            int[] test_input_line2 = Arrange_Int();
+            //int[] test_input_line2 = Arrange_Int();
             Deque<int> deq = new Deque<int>();
             bool expected, actual;
-            foreach (int i in test_input)
-                deq.Add(i);
+            for(int i = 0; i < 5000; ++i)
+                deq.Add(test_input[i]);
 
             // Act & Assert in parallel
             expected = true;
-            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
-                actual = deq.Contains(test_input_line2[i]);
+            for(int i = 0; i < 5000; ++i) {
+                actual = deq.Contains(test_input[i]);
                 Assert.Equal(expected, actual);
             }
 
             expected = false;
-            for(int i = test_input.Length;  i < (test_input.Length - 500); --i) {
+            for(int i = 0; i < 5000; ++i) {
                 /// there is about 0.0001% chance some of the elements might have been randodeqy generated equal 
                 /// since I used six digit integers, adding 1_000_000_000 will ensure all of them are different from test_input
-                int different_for_sure = test_input_line2[i] + 1_000_000_000;
+                int different_for_sure = test_input[i] + 1_000_000_000;
                 actual = deq.Contains(different_for_sure);
                 Assert.Equal(expected, actual);
             }

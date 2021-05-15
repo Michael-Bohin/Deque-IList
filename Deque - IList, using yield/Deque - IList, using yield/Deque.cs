@@ -188,6 +188,8 @@ public class Deque<T> : IDeque<T> {
         get {
             if (index < 0 || (_count - 1) < index)
                 throw new ArgumentOutOfRangeException();
+            //if(_count == 0)
+            //    throw new ArgumentOutOfRangeException();
 
             int head_with_offset = north_Is_North ? (((front.block << 10) | front.block_Offset) + index) : (((back.block << 10) | back.block_Offset) - index);
             return dataMap[head_with_offset >> 10][head_with_offset & 0b11_1111_1111];
@@ -198,6 +200,8 @@ public class Deque<T> : IDeque<T> {
                 throw new InvalidOperationException();
             if (index < 0 || (_count - 1) < index)
                 throw new ArgumentOutOfRangeException();
+            //if(_count == 0)
+            //    throw new ArgumentOutOfRangeException();
 
             int head_with_offset = north_Is_North ? (((front.block << 10) | front.block_Offset) + index) : (((back.block << 10) | back.block_Offset) - index);
             dataMap[head_with_offset >> 10][head_with_offset & 0b11_1111_1111] = value;
@@ -253,7 +257,7 @@ public class Deque<T> : IDeque<T> {
         }
     }
 
-    public bool Contains(T x) => IndexOf(x) != 1;
+    public bool Contains(T x) => IndexOf(x) != -1;
 
     public int IndexOf(T item) {
         if (item == null) {
