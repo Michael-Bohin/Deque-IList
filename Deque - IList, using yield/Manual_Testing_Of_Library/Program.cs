@@ -11,7 +11,7 @@ namespace Manual_Testing_Of_Library
             printMenu();
             while(true) {
                 string s = ReadLine().Trim();
-                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6" && s!="7" && s!="8" && s!="9" && s!="10") {
+                if(s != "1" && s != "2" && s != "3" && s!="4"  && s!="5" && s!="6" && s!="7" && s!="8" && s!="9" && s!="10" && s!="11" && s!="12") {
                     WriteLine("Unrecognized command. Kindly type either '1' up to '10'");
                 } else {
                     switch(s) {
@@ -25,6 +25,8 @@ namespace Manual_Testing_Of_Library
                         case "8": test_ReverseView_Add_X_Elements(1000); break;
                         case "9": test_ReverseView_RemoveAt(); break;
                         case "10": test_Null_Reference_Error_Hunt(); break;
+                        case "11": broken_reverse_remove_visualization(); break;
+                        case "12": vizualizace_pocitaciho_count_getteru(); break;
                         default: break;
                     }
                     break;
@@ -44,8 +46,76 @@ namespace Manual_Testing_Of_Library
             WriteLine("7: ReverseView operation 'IndexOutOfRangeException_pres_Add'");
             WriteLine("8: ReverseView Add X Elements");
             WriteLine("9: ReverseView Remove At");
-            WriteLine("10: To hunt null reference error \n\n");
+            WriteLine("10: To hunt null reference error");
+            WriteLine("11: Visualise broken reverse remove");
+            WriteLine("12: Visualise _count based on arithmetic, not cache");
         } 
+
+        static void vizualizace_pocitaciho_count_getteru() {
+            Deque<string> d = new Deque<string>();
+            WriteLine($"Empty deque has count: {d.Count}");
+
+            d.Add("prvni 1");
+            d.Add("druhy 2");
+            d.Add("treti 3");
+
+            WriteLine($"Deque with 3 elements has count: {d.Count}");
+            for(int i = 0; i < 3; ++i) {
+                WriteLine($"Element with  index {i} is: {d[i]}");
+            }
+
+            WriteLine("____ init 5k add _______");
+
+            for(int i = 0; i < 5000; i ++) 
+                d.Add($"ahoj: {i}");
+            
+            WriteLine($"Deque with 5003 elements has count: {d.Count}");
+
+            WriteLine();
+            
+           // WriteLine($"Element with index 5002 is: {d[5002]}");
+/*
+            for(int i = 0; i < 5; ++i) {
+                WriteLine($"Element with  index {i} is: {d[i]}");
+            }
+            WriteLine("\n__>><<__\n");
+            for(int i = 4998; i < 5003; ++i) {
+                WriteLine($"Element with  index {i} is: {d[i]}");
+            }
+*/
+            int index = 0;
+            foreach(string s in d) {
+                WriteLine($"Element with  index {index} is: {s}");
+                index++;
+            }
+
+        }
+
+        static void broken_reverse_remove_visualization() {
+            string[] vstup = new string[] { "prvni 1", "druhy 2", "treti 3", "ctvrty 4", "paty 5", "sesty 6", "sedmy 7", "osmy 8", "devaty 9", "desaty 10" };
+            Deque<string> d = new Deque<string>();
+            foreach(string s in vstup)
+                d.Add(s);
+
+            int counter = 0;
+            foreach(string s in d) {
+                WriteLine($"index: {counter}, element: {s}");
+                counter++;
+            }
+
+            d.Reverse_North_Pole();
+
+            d.Remove("paty 5");
+            d.Remove("desaty 10");
+            
+
+            counter = 0;
+            foreach(string s in d) {
+                WriteLine($"index: {counter}, element: {s}");
+                counter++;
+            }
+                
+        }
 
         static void test_Null_Reference_Error_Hunt() {
             string[] test_vstup = new string[] { "ahoj", "svete", "hunt", "bugu", null, null, "abc", "def"};
@@ -129,7 +199,7 @@ namespace Manual_Testing_Of_Library
             WriteLine(listXX.IndexOf(null));
             WriteLine(listXX.IndexOf(a));
 
-
+/*
             int x = 5;
 
             if(x is ValueType) {
@@ -146,7 +216,7 @@ namespace Manual_Testing_Of_Library
                 WriteLine("List<int> IS NOT cvalue type!");
             }
 
-
+*/
         }
 
         static void test_ReverseView_RemoveAt() {

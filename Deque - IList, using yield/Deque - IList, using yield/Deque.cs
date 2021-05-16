@@ -5,8 +5,9 @@ using static System.Console;
 
 public static class DequeTest {
     public static IList<T> GetReverseView<T>(Deque<T> d) {
-        d.Reverse_North_Pole();
-        return d; 
+        Deque<T> ShallowCopy = (Deque<T>) d.GetShallowCopy();
+        ShallowCopy.Reverse_North_Pole();
+        return ShallowCopy;
     }
 }
 
@@ -37,24 +38,20 @@ interface IDeque<T> : IList<T> {
     T NahledniKonec ();
 }
 
-class TooSmallCapacityDemandedException : Exception { }
 class InvalidOperationException: Exception { }
 
-class LBA_Pointer { // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
+public class LBA_Pointer { // Linear Block Adress Pointer -> in analogy to LBA from principles of computers
     public int block { get; private set; }
     public int block_Offset { get; private set; }
 
-    public LBA_Pointer() {
+    public LBA_Pointer(int offset) {
         block = 0; // index 0 of first block
-        block_Offset = 511;
+        block_Offset = offset;
     }
 
     public LBA_Pointer(int block, int block_Offset) {
-        this.block = block; this.block_Offset = block_Offset;
-    }
-
-    public LBA_Pointer(LBA_Pointer copy) {
-        block = copy.block; block_Offset = copy.block_Offset;
+        this.block = block; 
+        this.block_Offset = block_Offset;
     }
 
     public void Increment() {
@@ -73,106 +70,81 @@ class LBA_Pointer { // Linear Block Adress Pointer -> in analogy to LBA from pri
         }
     }
 
-    public void Set_New_Coordinates(int block, int block_Offset) {
-        this.block = block; this.block_Offset = block_Offset;
+    public void Set_Coordinates(int block, int offset) {
+        this.block = block;
+        block_Offset = offset;
     }
 }
 
 public class Deque<T> : IDeque<T> {
-    private int _count = 0;
-    private int _capacity = 1024;
-    private int _blockCount = 1;
-    private LBA_Pointer front = new LBA_Pointer();
-    private LBA_Pointer back = new LBA_Pointer();
+    private LBA_Pointer front = new LBA_Pointer(510);
+    private LBA_Pointer back = new LBA_Pointer(511);
     private T[][] dataMap = new T[1][];
     private bool north_Is_North = true;
     private bool enumeration_In_Process = false;
-    public int Count => _count;
+
+    public int Count {
+        get {
+            return ((back.block - front.block) << 10 ) + back.block_Offset - front.block_Offset - 1;
+        }
+    }
+
+    public Deque() { 
+        dataMap[0] = new T[0b_100_0000_0000]; 
+    }
+
     public bool IsReadOnly => false; // nobody told us to forbid addition and removal of elements after creation
-
-    public Deque() {
-        dataMap[0] = new T[0b_100_0000_0000];
-    }
-
-    public Deque(int capacity) { // let the user decide initial capacity must not be smaller than 1024, which is predefined size of one block 
-        if (capacity < 1024)
-            throw new TooSmallCapacityDemandedException();
-
-        dataMap[0] = new T[0b_100_0000_0000];
-        while (_capacity < capacity)
-            DoubleCapacity();
-    }
+    public Deque<T> GetShallowCopy() => (Deque<T>) this.MemberwiseClone();
 
     public void Add(T x) {
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
-        if (north_Is_North) {
-            if (back.block_Offset == 1023 && back.block == (_blockCount - 1)) // in future implement version that needs to double only once front and rear meet at same place -> rear will be allowed to port to index 0 and front will be allowed to port to last index, whoever of them gets there first
-                DoubleCapacity();
-        } else {
-            if (front.block_Offset == 0 && front.block_Offset == 0) // in future implement version that needs to double only once front and rear meet at same place -> rear will be allowed to port to index 0 and front will be allowed to port to last index, whoever of them gets there first
-                DoubleCapacity();
-        }
-
-        if (_count != 0) {
-            if (north_Is_North)
-                back.Increment();
-            else
-                front.Decrement();
-        }
+        if(back.block == dataMap.Length || front.block == -1) // in future implement circular version -> only double capacity once all boxes had been used 
+            DoubleCapacity();
 
         if (north_Is_North) {
             dataMap[back.block][back.block_Offset] = x;
+            back.Increment();
         } else {
             dataMap[front.block][front.block_Offset] = x;
+            front.Decrement();
         }
-        _count++;
-
     }
 
     private void DoubleCapacity() {
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
-        int data_Blocks_Used = dataMap.Length;
-        T[][] larger_dataMap = new T[data_Blocks_Used << 1][]; // double the count using shift operator // notice this would eventualy run out at 2^31, which for most purposes is ok, but definitelly makes it be not infinite 
+        T[][] larger_dataMap = new T[ dataMap.Length << 1][]; // double the count using shift operator // notice this would eventualy run out at 2^31, which for most purposes is ok, but definitelly makes it be not infinite 
         for (int i = 0; i < larger_dataMap.Length; ++i)
             larger_dataMap[i] = new T[0b_100_0000_0000];
 
-        int blockZero = _blockCount == 1 ? 1 : larger_dataMap.Length >> 1;
-        // move front towards edge of dataMap by half of count (in order to have equal capacity at both ends of deque)
-        if(blockZero > 1) {
-            int quarter = _blockCount >> 1;
-            if(north_Is_North) 
-                blockZero -= quarter;
-            else 
-                blockZero += quarter;
-        }
+        int blockZero = north_Is_North ? (dataMap.Length - (dataMap.Length >> 1)) : (dataMap.Length + (dataMap.Length >> 1)) ;
         LBA_Pointer current = new LBA_Pointer(blockZero, 0);
 
         foreach (T item in this) {
-            larger_dataMap[current.block][current.block_Offset] = item;
             if(north_Is_North)
                 current.Increment();
             else 
                 current.Decrement();
+            larger_dataMap[current.block][current.block_Offset] = item;
         }
-        if(north_Is_North)
-            current.Decrement(); // after exiting foreach loop return to real back index (no new element came)
-        else 
+
+        if(north_Is_North) {
             current.Increment();
+        } else { 
+            current.Decrement();
+        }
 
         dataMap = larger_dataMap;
-        _capacity <<= 1;
-        _blockCount <<= 1;
 
         if (north_Is_North) {
-            back.Set_New_Coordinates(current.block, current.block_Offset); // for sure I could have used the construcor here, but semantics wise I do want to differentiate these two actions, hence this approach
-            front.Set_New_Coordinates(blockZero, 0);
+            back.Set_Coordinates( current.block, current.block_Offset );
+            front.Set_Coordinates( blockZero , 0 );
         } else {
-            front.Set_New_Coordinates(current.block, current.block_Offset);
-            back.Set_New_Coordinates(blockZero, 0);
+            front.Set_Coordinates( current.block, current.block_Offset );
+            back.Set_Coordinates( blockZero , 0 );
         }
     }
 
@@ -184,45 +156,29 @@ public class Deque<T> : IDeque<T> {
     }
 
     public T this[int index] { // indexer declaration
-        // variable front_plus_offset changed to head_with_offset in order to better catch its semantics with reverse view
         get {
-            if (index < 0 || (_count - 1) < index)
+            if (index < 0 || (Count - 1) < index)
                 throw new ArgumentOutOfRangeException();
-            //if(_count == 0)
-            //    throw new ArgumentOutOfRangeException();
 
-            int head_with_offset = north_Is_North ? (((front.block << 10) | front.block_Offset) + index) : (((back.block << 10) | back.block_Offset) - index);
+            int head_with_offset = north_Is_North ? (( (front.block << 10) | front.block_Offset) + index + 1 ) : (( (back.block << 10) | back.block_Offset) - index - 1 );
             return dataMap[head_with_offset >> 10][head_with_offset & 0b11_1111_1111];
         }
 
         set {
             if (enumeration_In_Process)
                 throw new InvalidOperationException();
-            if (index < 0 || (_count - 1) < index)
+            if (index < 0 || (Count - 1) < index)
                 throw new ArgumentOutOfRangeException();
-            //if(_count == 0)
-            //    throw new ArgumentOutOfRangeException();
 
-            int head_with_offset = north_Is_North ? (((front.block << 10) | front.block_Offset) + index) : (((back.block << 10) | back.block_Offset) - index);
+            int head_with_offset = north_Is_North ? (( (front.block << 10) | front.block_Offset) + index + 1 ) : (( (back.block << 10) | back.block_Offset) - index - 1 );
             dataMap[head_with_offset >> 10][head_with_offset & 0b11_1111_1111] = value;
         }
     }
 
     public IEnumerator<T> GetEnumerator() {
         enumeration_In_Process = true;
-        // >>>> <<<<< //
-        LBA_Pointer current = north_Is_North ? new LBA_Pointer(front) : new LBA_Pointer(back);
-        if(north_Is_North)
-            for (int i = 0; i < _count; ++i) {
-                yield return dataMap[current.block][current.block_Offset];
-                current.Increment();
-            }
-        else 
-            for (int i = 0; i < _count; ++i) {
-                yield return dataMap[current.block][current.block_Offset];
-                current.Decrement();
-            }
-        // >>>> <<<<< //
+        for(int i = 0; i < Count; ++i)
+            yield return this[i];
         enumeration_In_Process = false;
     }
 
@@ -232,13 +188,10 @@ public class Deque<T> : IDeque<T> {
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
-        _count = 0;
-        _capacity = 1024;
-        _blockCount = 1;
         dataMap = new T[1][];
         dataMap[0] = new T[0b_100_0000_0000];
-        front.Set_New_Coordinates(0, 511);
-        back.Set_New_Coordinates(0, 511);
+        front.Set_Coordinates(0, 511);
+        back.Set_Coordinates(0, 512);
     }
 
     public void CopyTo(T[] target, int fromIndex) {
@@ -247,7 +200,7 @@ public class Deque<T> : IDeque<T> {
             throw new ArgumentNullException();
         if (fromIndex < 0)
             throw new ArgumentOutOfRangeException();
-        if (target.Length < _count + fromIndex)
+        if (target.Length < Count + fromIndex)
             throw new ArgumentException();
 
         int target_Index = fromIndex;
@@ -261,11 +214,11 @@ public class Deque<T> : IDeque<T> {
 
     public int IndexOf(T item) {
         if (item == null) {
-            for (int i = 0; i < _count; ++i)
+            for (int i = 0; i < Count; ++i)
                 if (this[i] == null)
                     return i;
         } else {
-            for (int i = 0; i < _count; ++i)
+            for (int i = 0; i < Count; ++i)
                 if (item.Equals(this[i]))
                     return i;
         }
@@ -273,21 +226,21 @@ public class Deque<T> : IDeque<T> {
     }
 
     public void Insert(int index, T item) {
-        if (index == _count) { // in order to evade argument out of range exception, if count is equal to index, redirect to add and return 
-            Add(item); return;
+        if (index == Count) { // in order to evade argument out of range exception, if count is equal to index, redirect to add and return 
+            Add(item); 
+            return;
         }
 
-        if (index < 0 || _count < index)
+        if (index < 0 || Count < index)
             throw new ArgumentOutOfRangeException();
 
         if (enumeration_In_Process)
             throw new InvalidOperationException();
 
-        if ((front.block == 0 && front.block_Offset == 0) || (back.block == (_blockCount - 1) && back.block_Offset == 1023))
+        if( back.block == dataMap.Length || front.block == -1 )
             DoubleCapacity();
 
-        _count++;
-        if (index < (_count >> 1))
+        if (index < (Count >> 1))
             shift_To_Front(index); // shift elements towards front
         else
             shift_To_Back(index); // shift elements towards end
@@ -310,7 +263,7 @@ public class Deque<T> : IDeque<T> {
         else
             front.Decrement();
 
-        for (int i = (_count-1 ); up_to_a_point < i; --i)
+        for (int i = (Count-1 ); up_to_a_point < i; --i)
             this[i] = this[ i-1 ];
     }
 
@@ -319,7 +272,7 @@ public class Deque<T> : IDeque<T> {
             throw new InvalidOperationException();
 
         if (item == null) {
-            for (int i = 0; i < _count; ++i)
+            for (int i = 0; i < Count; ++i)
                 if (this[i] == null) {
                     RemoveAt(i); // call own method 
                     return true;
@@ -327,7 +280,7 @@ public class Deque<T> : IDeque<T> {
             return false;
         }
 
-        for (int i = 0; i < _count; ++i)
+        for (int i = 0; i < Count; ++i)
             if (this[i].Equals(item)) {
                 RemoveAt(i); // call own method 
                 return true;
@@ -342,10 +295,10 @@ public class Deque<T> : IDeque<T> {
         if (IsReadOnly)
             throw new NotSupportedException();
 
-        if (index < 0 || (_count - 1) < index)
+        if (index < 0 || (Count - 1) < index)
             throw new ArgumentOutOfRangeException();
 
-        if (index < (_count / 2)) {
+        if (index < (Count / 2)) {
             for (int i = index; 0 < i; --i)
                 this[i] = this[i - 1];
             if (north_Is_North)
@@ -353,15 +306,14 @@ public class Deque<T> : IDeque<T> {
             else
                 back.Decrement();
         } else {
-            for (int i = index; i < (_count - 1); ++i)
+            for (int i = index; i < (Count - 1); ++i)
                 this[i] = this[i + 1];
             if (north_Is_North)
                 back.Decrement();
             else
                 front.Increment();
         }
-        _count--; // job done 😂😂😂
-    }
+    } // job done 😂😂😂
 
     public T RemoveFront() => OdeberZacatek();
     public void EnqueueFront(T item) => ZafrontiZacatek(item);
@@ -373,7 +325,7 @@ public class Deque<T> : IDeque<T> {
     public T PeekBack() => NahledniKonec();
 
     public T OdeberZacatek() {
-        if(_count == 0)
+        if(Count == 0)
             throw new InvalidOperationException();
 
         T front = this[0];
@@ -385,16 +337,16 @@ public class Deque<T> : IDeque<T> {
     public void ZafrontiKonec(T item) => Add(item);
 
     public T OdeberKonec() {
-        if (_count == 0)
+        if (Count == 0)
             throw new InvalidOperationException();
 
-        T back = this[_count-1];
-        RemoveAt(_count-1);
+        T back = this[Count-1];
+        RemoveAt(Count-1);
         return back;
     }
 
     public bool ZkusNahlednoutZacatek(out T result) {
-        if(_count == 0) { // set result to default value and return false 
+        if(Count == 0) { // set result to default value and return false 
             result = default(T);
             return false;
         }
@@ -403,23 +355,23 @@ public class Deque<T> : IDeque<T> {
     }
 
     public bool ZkusNahlednoutKonec(out T result) {
-        if (_count == 0) { // set result to default value and reutnr false 
+        if (Count == 0) { // set result to default value and reutnr false 
             result = default(T);
             return false;
         }
-        result = this[_count-1];
+        result = this[Count-1];
         return true;
     }
 
     public T NahledniZacatek() {
-        if (_count == 0)
+        if (Count == 0)
             throw new InvalidOperationException();
         return this[0];
     }
 
     public T NahledniKonec() {
-        if (_count == 0)
+        if (Count == 0)
             throw new InvalidOperationException();
-        return this[_count-1];
+        return this[Count-1];
     }
 }
