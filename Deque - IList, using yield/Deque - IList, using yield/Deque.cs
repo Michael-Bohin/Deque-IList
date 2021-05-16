@@ -175,16 +175,6 @@ public class Deque<T> : IDeque<T> {
         }
     }
 
-    public IEnumerator<T> GetEnumerator() {
-
-        
-        enumeration_In_Process = true;
-        for(int i = 0; i < Count; ++i)
-            yield return this[i];
-        enumeration_In_Process = false;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => dataMap.GetEnumerator();
 
     public void Clear() {
         if (enumeration_In_Process)
@@ -376,4 +366,49 @@ public class Deque<T> : IDeque<T> {
             throw new InvalidOperationException();
         return this[Count-1];
     }
+
+    /*public IEnumerator<T> GetEnumerator() {
+        throw new NotImplementedException();
+    }*/
+
+    public IEnumerator<T> GetEnumerator() => new Enumerator(this);
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
+
+    // Defines the enumerator for the Boxes collection.
+    // (Some prefer this class nested in the collection class.)
+    private class Enumerator : IEnumerator<T> {
+        Deque<T> d;
+        int current_index;
+        T current_element;
+
+        public Enumerator(Deque<T> d) {
+            this.d = d;
+            current_index = -1;
+            current_element = default(T);
+        }
+
+        public bool MoveNext() {
+            //Avoids going beyond the end of the collection.
+            if (++current_index >= d.Count) {
+                return false;
+            } else {
+                // Set current T element to next item in collection.
+                current_element = d[current_index];
+            }
+            return true;
+        }
+
+        public void Reset() { current_index = -1; }
+
+        public T Current {
+            get { return current_element; }
+        }
+
+        void IDisposable.Dispose() { }
+        object IEnumerator.Current { get => Current; }
+    }
+    /*
+    IEnumerator IEnumerable.GetEnumerator() {
+        throw new NotImplementedException();
+    }*/
 }
