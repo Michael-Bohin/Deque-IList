@@ -176,6 +176,8 @@ public class Deque<T> : IDeque<T> {
     }
 
     public IEnumerator<T> GetEnumerator() {
+
+        
         enumeration_In_Process = true;
         for(int i = 0; i < Count; ++i)
             yield return this[i];
