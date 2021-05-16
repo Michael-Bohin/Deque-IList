@@ -76,12 +76,16 @@ public class LBA_Pointer { // Linear Block Adress Pointer -> in analogy to LBA f
     }
 }
 
+class ReferenceTypeEnumeratorSharedBoolean {
+    public bool enumeration_In_Process = false;
+}
+
 public class Deque<T> : IDeque<T> {
     private LBA_Pointer front = new LBA_Pointer(510);
     private LBA_Pointer back = new LBA_Pointer(511);
     private T[][] dataMap = new T[1][];
     private bool north_Is_North = true;
-    private bool enumeration_In_Process = false;
+    private ReferenceTypeEnumeratorSharedBoolean sharedBool = new ReferenceTypeEnumeratorSharedBoolean();
 
     public int Count {
         get {
@@ -97,7 +101,7 @@ public class Deque<T> : IDeque<T> {
     public Deque<T> GetShallowCopy() => (Deque<T>) this.MemberwiseClone();
 
     public void Add(T x) {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         if(back.block == dataMap.Length || front.block == -1) // in future implement circular version -> only double capacity once all boxes had been used 
@@ -112,8 +116,49 @@ public class Deque<T> : IDeque<T> {
         }
     }
 
+    public IEnumerator<T> GetEnumerator() => new Enumerator(this, sharedBool);
+    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this, sharedBool);
+
+    // Defines the enumerator for the Boxes collection.
+    // (Some prefer this class nested in the collection class.)
+    private class Enumerator : IEnumerator<T> {
+        Deque<T> d;
+        int current_index;
+        T current_element;
+        ReferenceTypeEnumeratorSharedBoolean sharedBool;
+
+        public Enumerator(Deque<T> d, ReferenceTypeEnumeratorSharedBoolean sharedBool) {
+            sharedBool.enumeration_In_Process = true;
+            this.sharedBool = sharedBool;
+            this.d = d;
+            current_index = -1;
+            current_element = default(T);
+        }
+
+        public bool MoveNext() {
+            //Avoids going beyond the end of the collection.
+            if (++current_index >= d.Count) {
+                sharedBool.enumeration_In_Process = false;
+                return false;
+            } else {
+                // Set current T element to next item in collection.
+                current_element = d[current_index];
+            }
+            return true;
+        }
+
+        public void Reset() { current_index = -1; }
+
+        public T Current {
+            get { return current_element; }
+        }
+
+        void IDisposable.Dispose() { }
+        object IEnumerator.Current { get => Current; }
+    }
+
     private void DoubleCapacity() {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         T[][] larger_dataMap = new T[ dataMap.Length << 1][]; // double the count using shift operator // notice this would eventualy run out at 2^31, which for most purposes is ok, but definitelly makes it be not infinite 
@@ -149,7 +194,7 @@ public class Deque<T> : IDeque<T> {
     }
 
     public void Reverse_North_Pole() {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         north_Is_North = north_Is_North ? false : true;
@@ -165,7 +210,7 @@ public class Deque<T> : IDeque<T> {
         }
 
         set {
-            if (enumeration_In_Process)
+            if (sharedBool.enumeration_In_Process)
                 throw new InvalidOperationException();
             if (index < 0 || (Count - 1) < index)
                 throw new ArgumentOutOfRangeException();
@@ -177,7 +222,7 @@ public class Deque<T> : IDeque<T> {
 
 
     public void Clear() {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         dataMap = new T[1][];
@@ -226,7 +271,7 @@ public class Deque<T> : IDeque<T> {
         if (index < 0 || Count < index)
             throw new ArgumentOutOfRangeException();
 
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         if( back.block == dataMap.Length || front.block == -1 )
@@ -260,7 +305,7 @@ public class Deque<T> : IDeque<T> {
     }
 
     public bool Remove(T item) {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         if (item == null) {
@@ -281,7 +326,7 @@ public class Deque<T> : IDeque<T> {
     }
 
     public void RemoveAt(int index) {
-        if (enumeration_In_Process)
+        if (sharedBool.enumeration_In_Process)
             throw new InvalidOperationException();
 
         if (IsReadOnly)
@@ -366,49 +411,4 @@ public class Deque<T> : IDeque<T> {
             throw new InvalidOperationException();
         return this[Count-1];
     }
-
-    /*public IEnumerator<T> GetEnumerator() {
-        throw new NotImplementedException();
-    }*/
-
-    public IEnumerator<T> GetEnumerator() => new Enumerator(this);
-    IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
-
-    // Defines the enumerator for the Boxes collection.
-    // (Some prefer this class nested in the collection class.)
-    private class Enumerator : IEnumerator<T> {
-        Deque<T> d;
-        int current_index;
-        T current_element;
-
-        public Enumerator(Deque<T> d) {
-            this.d = d;
-            current_index = -1;
-            current_element = default(T);
-        }
-
-        public bool MoveNext() {
-            //Avoids going beyond the end of the collection.
-            if (++current_index >= d.Count) {
-                return false;
-            } else {
-                // Set current T element to next item in collection.
-                current_element = d[current_index];
-            }
-            return true;
-        }
-
-        public void Reset() { current_index = -1; }
-
-        public T Current {
-            get { return current_element; }
-        }
-
-        void IDisposable.Dispose() { }
-        object IEnumerator.Current { get => Current; }
-    }
-    /*
-    IEnumerator IEnumerable.GetEnumerator() {
-        throw new NotImplementedException();
-    }*/
 }
